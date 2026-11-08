@@ -31,7 +31,7 @@ function gridMesh(name,part,minX,maxX,z,cells=32){
   return {name,userData:{studioFaces:faces}};
 }
 
-const paint={projection:p=>[p.x/4,1-p.y]};
+const paint={projection:p=>[p.x/4,1-p.y],wrapLimits:{version:3,coverageVersion:4,maxFaces:48000}};
 const runtime={window:{SU7Paint:paint},SU7Paint:paint};
 vm.runInNewContext(fs.readFileSync(path.join(__dirname,'..','app','surface-wrap.js'),'utf8'),runtime);
 const SurfaceWrap=runtime.window.SU7SurfaceWrap;

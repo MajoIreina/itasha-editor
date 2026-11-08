@@ -1,5 +1,6 @@
 /* Exterior paint geometry. Shared by the viewport and offline guide generator. */
 window.SU7Paint = (() => {
+  const wrapLimits=Object.freeze({version:3,coverageVersion:4,maxFaces:48000});
   const parts={doorLF:{label:'左前门',region:'left'},doorLB:{label:'左后门',region:'left'},doorRF:{label:'右前门',region:'right'},doorRB:{label:'右后门',region:'right'},frontBumper:{label:'前保险杠',region:'front'},rearBumper:{label:'后保险杠',region:'rear'},bonnet:{label:'前备箱盖',region:'top'},trunk:{label:'后备箱盖',region:'top'},empennage:{label:'尾翼',region:'top'},body:{label:'其余裸露油漆车体',region:null}};
   const names={carPaint_external_10:'frontBumper',carPaint_external_4:'doorLF',carPaint_external_5:'doorLB',carPaint_external_6:'doorRF',carPaint_external_7:'doorRB',carPaint_external_3_1:'bonnet',carPaint_external_8:'trunk',carPaint_external_2:'empennage',carPaint_internal_23:'body'};
   function projection(p,r){return r==='left'?[(p.x+2.6)/5.2,(1.55-p.y)/1.55]:r==='right'?[(2.6-p.x)/5.2,(1.55-p.y)/1.55]:r==='top'?[(p.x+2.6)/5.2,(p.z+1.05)/2.1]:r==='front'?[(p.z+1.05)/2.1,(1.55-p.y)/1.55]:[(1.05-p.z)/2.1,(1.55-p.y)/1.55];}
@@ -23,5 +24,5 @@ window.SU7Paint = (() => {
     mesh.userData.studioFaces=faces;return faces;
   }
   function ignoreGuideOccluder(mesh){return /后视镜/.test(mesh.material?.name||'')||/^car(?:RearviewMirror|OsrvmEcMirror|Mirror_(?:top|bottom)|Plate_bgs_)/i.test(mesh.name);}
-  return {parts,projection,region,prepare,ignoreGuideOccluder};
+  return {parts,projection,region,prepare,ignoreGuideOccluder,wrapLimits};
 })();

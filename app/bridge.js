@@ -402,6 +402,7 @@
         readySent=true;if(embedded)parent.postMessage({type:'su7-ready',meshes:meshes.length},location.origin);
       }
     }, setLighting(value){lightingValue={...lightingValue,...value};lightingEngine?.set(lightingValue);redraw();},get lighting(){return lightingEngine?.actual||lightingValue;},update,guides,view,extract,hideOptions,configTab,readConfiguration,restoreConfiguration,selectConfiguration,setQuality,setGraphics,togglePart,paintHit,exportPaintMasks,makeWrap,reframeWrap,setArtworkLayers,pickArtwork,
+    rebuildWrap(wrap){return surfaceGraph().make(wrap);},
     previewWrap(id,wrap){renderWrapped(id,wrap);},projectedPaintHit(region,u,v){return surfaceGraph().projectedHit(region,u,v);},setInteractionQuality(value){value=!!value;if(interactionQuality===value)return;interactionQuality=value;applyRenderGraphics();redraw();},hasArtworkTexture(id,signature){return wrappedTextureCache.has(signature);},
     get wraps(){return [...wrappedLayers].map(([id,v])=>({id,selected:!!v.selected.value,parts:[...new Set(v.wrap.patches.map(p=>p.part))],regions:[...new Set(v.wrap.patches.map(p=>p.region))],nodes:v.nodes.length,texture:v.texture?.image&&[v.texture.image.width,v.texture.image.height]}));},
     setStage(value){

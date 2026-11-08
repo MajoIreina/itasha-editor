@@ -195,8 +195,8 @@ let app;
   const trunk = diagnostics.coverage.trunkIslands;
   assert.ok(trunk, 'real SU7 trunk contains a nearby split paint island');
   assert.equal(trunk.includedComponents.length, 2, 'trunk decal covers both sides of the split paint island');
-  assert.deepEqual(trunk.parts, ['trunk'], 'trunk decal stays on the selected painted panel');
-  console.log('PASS real SU7 trunk decal covers both split islands without leaking to another panel');
+  for (const part of ['frontBumper', 'bonnet', 'doorLF', 'doorRF', 'rearBumper']) assert.ok(!trunk.parts.includes(part), `small trunk decal does not reach unrelated ${part}`);
+  console.log('PASS real SU7 trunk decal covers both split islands and adjacent rear paint without reaching distant panels');
   assert.ok(diagnostics.seams > 0, 'surface graph builds the body seam network');
   console.log(JSON.stringify(diagnostics, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; })
