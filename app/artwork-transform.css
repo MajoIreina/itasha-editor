@@ -1,0 +1,18 @@
+/* Selection UI is outside the artwork canvas, including for exports and UV extraction. */
+#canvas-document{position:relative;flex:none;width:max-content;height:max-content;line-height:0;touch-action:none}
+#canvas-document #design-canvas{display:block}
+#artwork-selection{--selection-color:#76bcff;position:absolute;z-index:3;box-sizing:border-box;border:1px solid var(--selection-color);box-shadow:0 0 0 1px #101010a6;pointer-events:none;transform-origin:center}
+#artwork-selection.wrapped{--selection-color:#ffc47b}
+#artwork-selection.locked{--selection-color:#aeb6c0;border-style:dashed}
+#artwork-selection button{position:absolute;pointer-events:auto;touch-action:none;box-sizing:border-box;width:10px;height:10px;min-width:0;min-height:0;padding:0;margin:0;border:1px solid #19232e;border-radius:1px;background:var(--selection-color);box-shadow:0 0 0 1px #1118;transform:translate(-50%,-50%)}
+#artwork-selection button:hover,#artwork-selection button:focus-visible{background:#fff;outline:2px solid var(--selection-color);outline-offset:2px}
+#artwork-selection button[data-transform="rotate"]{top:-28px!important;width:12px;height:12px;border-radius:50%}
+#artwork-selection .rotation-stem{position:absolute;left:50%;top:-28px;height:28px;width:1px;background:var(--selection-color);box-shadow:1px 0 #1117}
+#artwork-selection .selection-badge{position:absolute;left:0;top:calc(100% + 9px);padding:3px 5px;background:#232a30e8;border:1px solid var(--selection-color);border-radius:2px;color:var(--selection-color);font-size:9px;line-height:1.2;white-space:nowrap}
+#artwork-selection.locked button,#artwork-selection.locked .rotation-stem,#artwork-selection.unavailable button,#artwork-selection.unavailable .rotation-stem{display:none}
+.transform-actions{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.transform-actions button{flex:1;padding:5px;font-size:10px;white-space:normal}
+.transform-help{margin:8px 0;color:#b1bcc6;font-size:10px;line-height:1.7;overflow-wrap:anywhere}
+#transform-load-3d{padding:5px 0;font-size:10px;color:#a8d0f3}
+#properties-fields input:disabled,#properties-fields select:disabled,#properties-fields textarea:disabled{opacity:.5;cursor:not-allowed}
+.layer-item:focus-visible{outline:1px solid #91c7ff;outline-offset:-1px}

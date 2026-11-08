@@ -1,0 +1,61 @@
+# Build outputs and downloaded dependencies
+/backend/target/
+/desktop/node_modules/
+/desktop/electron/
+/desktop/native/
+/desktop/build-manifest.json
+/development/
+/runtime/
+/app-deps/
+node_modules/
+__pycache__/
+*.pyc
+*.exe
+*.dll
+*.pdb
+*.obj
+*.zip
+*.7z
+*.pending
+
+# User projects, machine settings, browser profiles and credentials
+/projects/
+/exports/
+/logs/
+/app-data*/
+/webview2-data/
+/webview2-test-data/
+/NVIDIA Corporation/
+/.studio-server
+/.itasha-session.json
+/performance-settings.json
+/启动错误.txt
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Offline third-party capture stays local; source customizations are versioned
+/resources/*
+!/resources/custom.js
+!/resources/custom.css
+!/resources/README.md
+/vehicles/data/
+/vehicles/download-failures.json
+/vehicles/*/*
+!/vehicles/*/backend-adapter.json
+!/vehicles/*/adapter.json
+!/vehicles/*/acceptance.json
+!/vehicles/*/source.json
+
+# Generated reports, screenshots and local scratch files
+/tools/acceptance/
+/tools/*-verification.json
+/tools/verification.json
+/tools/selection-preview.png
+/tools/fixtures/images/formats-verification.json
+/界面预览.png
+*.log
+Thumbs.db
+.DS_Store

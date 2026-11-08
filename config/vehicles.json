@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "vehicles": [
+    {
+      "id": "su7",
+      "label": "Su7",
+      "goodsId": "900010301",
+      "itemId": "500023067",
+      "ssuId": "600046407",
+      "manifest": "resources/manifest.json",
+      "extras": "resources/extras.json",
+      "assetRoot": "resources",
+      "adapter": "vehicles/su7/backend-adapter.json",
+      "baselineVerified": true
+    },
+    {
+      "id": "su7-ultra",
+      "label": "Su7Ultra",
+      "goodsId": "500010402",
+      "itemId": "500010402",
+      "ssuId": "600014078",
+      "manifest": "vehicles/su7-ultra/manifest.json",
+      "extras": null,
+      "assetRoot": "vehicles",
+      "adapter": "vehicles/su7-ultra/backend-adapter.json",
+      "baselineVerified": false
+    },
+    {
+      "id": "yu7",
+      "label": "Yu7",
+      "goodsId": "500015457",
+      "itemId": "500015457",
+      "ssuId": "600019695",
+      "manifest": "vehicles/yu7/manifest.json",
+      "extras": null,
+      "assetRoot": "vehicles",
+      "adapter": "vehicles/yu7/backend-adapter.json",
+      "baselineVerified": false
+    },
+    {
+      "id": "yu7-gt",
+      "label": "Yu7GT",
+      "goodsId": "500015457",
+      "itemId": "500015457",
+      "ssuId": "600127501",
+      "manifest": "vehicles/yu7-gt/manifest.json",
+      "extras": null,
+      "assetRoot": "vehicles",
+      "adapter": "vehicles/yu7-gt/backend-adapter.json",
+      "baselineVerified": false
+    },
+    {
+      "id": "n70",
+      "label": "N70",
+      "goodsId": "900020450",
+      "itemId": "500042036",
+      "ssuId": "600147044",
+      "manifest": "vehicles/n70/manifest.json",
+      "extras": null,
+      "assetRoot": "vehicles",
+      "adapter": "vehicles/n70/backend-adapter.json",
+      "baselineVerified": false
+    },
+    {
+      "id": "n90",
+      "label": "N90",
+      "goodsId": "900020450",
+      "itemId": "500042050",
+      "ssuId": "600147081",
+      "manifest": "vehicles/n90/manifest.json",
+      "extras": null,
+      "assetRoot": "vehicles",
+      "adapter": "vehicles/n90/backend-adapter.json",
+      "baselineVerified": false
+    },
+    {
+      "id": "n90-explore",
+      "label": "N90探索版",
+      "goodsId": "900020450",
+      "itemId": "500042050",
+      "ssuId": "600147082",
+      "manifest": "vehicles/n90-explore/manifest.json",
+      "extras": null,
+      "assetRoot": "vehicles",
+      "adapter": "vehicles/n90-explore/backend-adapter.json",
+      "baselineVerified": false
+    }
+  ]
+}

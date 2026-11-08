@@ -1,0 +1,8 @@
+痛车编辑器：本地涂装编辑器与 Windows 启动器。
+当前运行架构为 Rust + Electron；应用源码见 backend/src、desktop/src、app。
+车辆模型、原厂材质和配置界面来自用户提供的小米汽车配置器本地存档，来源与车型标识见 config/vehicles.json 和各车型 manifest。
+Electron 45.2.3 的许可和第三方声明保留在 desktop/electron/LICENSE 与 LICENSES.chromium.html。
+原生图片解码使用 ImageMagick 7.1.2-35 portable Q16 x64，其许可与第三方声明保留在 desktop/native/imagemagick/LICENSE.txt、NOTICE.txt。
+Rust 第三方依赖及固定版本见 backend/Cargo.toml、backend/Cargo.lock。
+旧 Python 与 WebView2 源码、DLL 和声明归档在 development/legacy-webview2/source，仅保留作本地开发历史比对，不进入新便携包或源码仓库。
+Git 仓库不包含车辆模型、原始捕获清单或第三方运行时，恢复方法见 docs/离线资源.md；这些资源保留原有来源和许可关系。

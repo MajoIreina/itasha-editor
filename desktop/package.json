@@ -1,0 +1,18 @@
+{
+  "name": "itasha-editor",
+  "version": "0.2.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "description": "Itasha Editor desktop host",
+  "main": "src/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.cjs",
+    "build": "node ../tools/build-desktop.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.2.3",
+    "playwright-core": "1.58.2",
+    "pngjs": "7.0.0"
+  }
+}

@@ -1,0 +1,3 @@
+.local-hide-price,
+[class*="priceRowItem"],
+[class*="PriceRowItem"] { display: none !important; }

@@ -1,0 +1,36 @@
+[package]
+name = "itasha-backend"
+version = "0.2.0"
+edition = "2024"
+default-run = "itasha-backend"
+
+[[bin]]
+name = "itasha-backend"
+path = "src/main.rs"
+
+[[bin]]
+name = "itasha-launcher"
+path = "src/bin/launcher.rs"
+
+[dependencies]
+anyhow = "1"
+base64 = "0.22"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+flate2 = "1"
+mime_guess = "2"
+png = "0.18"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tempfile = "3"
+tiny_http = "0.12"
+url = "2"
+urlencoding = "2"
+zip = { version = "6", default-features = false, features = ["deflate"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_System_Threading", "Win32_Foundation"] }
+
+[profile.release]
+lto = "thin"
+strip = true
