@@ -63,3 +63,28 @@ body[data-stage="configure"] #vehicle-configuration{display:flex}body[data-stage
 #new-dialog{width:720px}#vehicle-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:15px 0}#vehicle-choices button{padding:13px 9px;white-space:normal;min-width:0;text-align:left}#vehicle-choices strong{display:block;font-size:14px;font-weight:500}#vehicle-choices small{display:block;font-size:9px;color:#aaa;line-height:1.7;margin-top:9px}#vehicle-choices .active{border-color:#dfad69;background:#504232}@media(max-width:620px){#vehicle-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .viewer-actions{display:flex;gap:6px;align-items:center}#high-res-dialog{width:min(900px,calc(100vw - 24px))}.render-fields{grid-template-columns:repeat(4,minmax(0,1fr));margin:14px 0}.render-fields label{display:grid;gap:7px;font-size:11px;color:#aab2b8}.render-fields input{width:100%;min-width:0;padding:8px;font-size:14px}.render-note{margin:8px 0;color:#a5acb1;font-size:11px;line-height:1.7}#render-result{margin-top:14px;border-top:1px solid #4a4a4a;padding-top:12px}#render-image{display:block;width:100%;max-height:58vh;object-fit:contain;background:#222} .render-result-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px}.render-result-actions span{font-size:11px;color:#b1b7bc}@media(max-width:620px){.viewer-actions{gap:3px}.viewer-actions button{font-size:9px;padding:5px}.render-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.render-result-actions{flex-wrap:wrap}}
 @media(max-width:540px){.viewer-bottom #high-res-render{display:inline-flex}.viewer-actions #screenshot{display:none}}
+
+/* Resizable inspector regions. */
+.editor-detail{position:relative;min-width:0;min-height:0;overflow:visible;width:var(--inspector-width,425px)}
+.inspector-core{width:auto;min-width:0;min-height:0;flex:1 1 0}
+#asset-library{min-width:0;min-height:0;flex:0 0 var(--asset-size,190px);width:auto;height:auto;border:0;border-left:3px solid #191919;overflow:hidden}
+.layer-section{height:auto;min-height:0;flex:0 0 var(--layer-size,220px);border:0;overflow:hidden}
+.properties{min-height:0;flex:1 1 0}
+.panel-splitter{position:relative;z-index:4;flex:none;background:#242424;touch-action:none;user-select:none;outline:none}
+.panel-splitter[data-axis="vertical"]{width:7px;flex-basis:7px;cursor:col-resize}
+.panel-splitter[data-axis="horizontal"]{height:7px;flex-basis:7px;cursor:row-resize}
+.panel-splitter:hover,.panel-splitter:focus-visible,.panel-splitter.dragging{background:#6b583e}
+.panel-splitter-outer{position:absolute;left:-4px;top:0;bottom:0;width:8px;z-index:8;background:transparent;cursor:col-resize}
+.panel-splitter-outer:after{content:"";position:absolute;left:3px;top:0;bottom:0;width:2px;background:#3b3b3b}
+.panel-splitter-outer:hover:after,.panel-splitter-outer:focus-visible:after,.panel-splitter-outer.dragging:after{background:#dda35e}
+#layer-properties-splitter{width:100%;height:7px;flex:0 0 7px;cursor:row-resize}
+#asset-panel-splitter:after,#layer-properties-splitter:after{content:"";position:absolute;inset:2px;background:#3b3b3b}
+#asset-panel-splitter[data-axis="vertical"]:after{left:2px;right:2px;top:0;bottom:0}
+#asset-panel-splitter[data-axis="horizontal"]:after{top:2px;bottom:2px;left:0;right:0}
+#asset-panel-splitter:hover:after,#layer-properties-splitter:hover:after,#asset-panel-splitter.dragging:after,#layer-properties-splitter.dragging:after{background:#dda35e}
+@media(min-width:1450px){.editor-detail{flex-direction:row}.inspector-core{width:auto;flex:1 1 0;min-width:180px}#asset-library{width:auto;min-width:140px;flex:0 0 var(--asset-size,180px);border:0;border-left:3px solid #191919}}
+@media(max-width:1449px){.editor-detail{flex-direction:column}.inspector-core{width:auto;min-width:0;min-height:230px;flex:1 1 0}#asset-library{width:100%;min-width:0;min-height:125px;flex:0 0 var(--asset-size,190px);border:0;border-top:3px solid #191919}}
+@media(max-width:1000px){body[data-layout="both"] #workspace{grid-template-columns:minmax(0,1fr) var(--inspector-width,220px)}body[data-layout="both"] .editor-detail{grid-column:2;grid-row:1 / 4;width:100%}}
+body[data-layout="3d"] .inspector-core,body[data-layout="3d"] #asset-panel-splitter{display:none}
+body[data-layout="3d"] #asset-library{min-height:0;height:auto;flex:1;border:0}
+body[data-stage="configure"] .panel-splitter{display:none}

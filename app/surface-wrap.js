@@ -13,9 +13,11 @@ window.SU7SurfaceWrap=class {
     const adjacentPaintedParts=new Set([
       'doorLF:doorLB','doorLB:doorLF','doorRF:doorRB','doorRB:doorRF',
       'body:doorLF','doorLF:body','body:doorLB','doorLB:body',
-      'body:doorRF','doorRF:body','body:doorRB','doorRB:body'
+      'body:doorRF','doorRF:body','body:doorRB','doorRB:body',
+      'body:bonnet','bonnet:body','frontBumper:bonnet','bonnet:frontBumper'
     ]);
-    const compatibleComponents=(a,b)=>componentSizes[a]<=bridgeLimit||componentSizes[b]<=bridgeLimit||[...componentParts[a]].some(pa=>[...componentParts[b]].some(pb=>adjacentPaintedParts.has(pa+':'+pb)));
+    // Accept close islands on the same paint panel plus model-verified neighboring panels.
+    const compatibleComponents=(a,b)=>componentSizes[a]<=bridgeLimit||componentSizes[b]<=bridgeLimit||[...componentParts[a]].some(pa=>[...componentParts[b]].some(pb=>pa===pb||adjacentPaintedParts.has(pa+':'+pb)));
     const grid=new Map(),cell=.065,key=p=>[p.x,p.y,p.z].map(v=>Math.floor(v/cell));
     for(const id of candidatesSet){const k=key(this.vertices[id].p).join();if(!grid.has(k))grid.set(k,[]);grid.get(k).push(id);}
     const compatible=(a,b)=>{const v=this.vertices[a],other=this.vertices[b];if(v.links.has(b)||component[a]===component[b]||v.n.dot(other.n)<.4)return null;const delta=other.p.clone().sub(v.p),d=delta.length(),normal=v.n.clone().add(other.n).normalize();return d<cell&&Math.abs(delta.dot(normal))<.025?d:null;};
