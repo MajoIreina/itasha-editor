@@ -19,8 +19,14 @@ function Write-SyncLog([string]$Message) {
 }
 
 function Invoke-Git([string[]]$GitArgs) {
-  $result = & git -C $RepoRoot @GitArgs 2>&1
-  $exitCode = $LASTEXITCODE
+  $previousPreference = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $result = & git -C $RepoRoot @GitArgs 2>&1
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousPreference
+  }
   if ($exitCode -ne 0) {
     throw ('git {0} failed ({1}): {2}' -f ($GitArgs -join ' '), $exitCode, ($result -join ' '))
   }
@@ -61,9 +67,18 @@ function Get-ChangeSignature([string]$Status) {
 }
 
 function Get-Status {
-  $result = & git -C $RepoRoot status --porcelain=v1 --untracked-files=all --no-renames 2>&1
-  if ($LASTEXITCODE -ne 0) { throw ('Unable to read Git status: ' + ($result -join ' ')) }
-  return [string]::Join("`n", $result)
+  $previousPreference = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $result = & git -C $RepoRoot status --porcelain=v1 --untracked-files=all --no-renames 2>&1
+    $exitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $previousPreference
+  }
+  if ($exitCode -ne 0) { throw ('Unable to read Git status: ' + ($result -join ' ')) }
+  $statusLines = @($result | Where-Object { [string]$_ -match '^[ MADRCU?!]{2} ' })
+  if ($statusLines.Count -eq 0) { return '' }
+  return [string]::Join("`n", $statusLines)
 }
 
 function Push-IfAhead {
