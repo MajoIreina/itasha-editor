@@ -3,6 +3,9 @@
 用户于 2026-11-17 指定：以重构后的 NEXT 替换原 GitHub 项目，今后开发统一基于 NEXT。
 
 - 唯一应用工作区为 `next/`：Rust + Tauri 2 + React/TypeScript + wgpu。功能、修复和测试均进入对应的 `next/src`、`next/src-tauri`、`next/crates`、`next/tools`。
+- 当前物理目录与开发入口见 `docs/项目结构.md`。React 按 `app`、`features`、`bridge`、`shared` 分层；功能层不反向依赖 app，共用层不导入功能组件。业务权威状态留在 Rust，前端不另建一套工程历史。
+- Tauri 启动与状态在 `host.rs`，IPC 在 `commands/`，车型专用组装在 `adapters/`，原生窗口和线程在 `platform/`；通用业务/算法继续放入已有 6 个 crates。新增 IPC 须同步注册、权限、契约与调用。
+- 工具按 `checks/tests/smoke/catalog/assets/legacy` 分类。优先使用 package scripts；直接调用脚本时使用新目录并按脚本自身位置解析工作区根，避免依赖本机旧文件或调用者 cwd。
 - 根目录可能仍有本机旧版 `app/`、`backend/`、`desktop/` 和旧可执行文件；这些已退出版本管理，只作历史恢复依据，不继续开发、不重新纳入主线，也不作为 NEXT 的运行或测试依赖。
 - 车型来源数据 `config/vehicles.json` 与 `vehicles/*/backend-adapter.json` 仅供 `next/catalog` 生成工具使用，不代表恢复旧版应用链路。
 - 当前运行映射为 `next/assets/paint/su7-v24-mirrored/paint-map.json`。v21 是兼容回归样本，v15 只保留整车布局测试所需的尺寸报告。历史试验、未封口映射、Blender、原始车辆模型和用户数据保留本地，不强制加入 Git。

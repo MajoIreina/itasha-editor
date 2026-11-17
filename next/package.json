@@ -12,13 +12,13 @@
     "desktop:dev": "tauri dev",
     "desktop:build": "tauri build --no-bundle",
     "test:core": "cargo test --workspace --exclude itasha-desktop --locked",
-    "check:boundary": "node tools/check-boundary.mjs",
-    "test:transforms": "node tools/test-transforms.mjs",
-    "test:desktop": "node tools/smoke-desktop.mjs",
-    "inventory": "node tools/inventory-legacy.mjs",
-    "catalog:build": "node tools/build-vehicle-catalog.mjs",
-    "test:editor-properties": "node tools/test-editor-properties.mjs",
-    "test:whole-layout": "node tools/test-whole-layout.mjs"
+    "check:boundary": "node tools/checks/check-boundary.mjs",
+    "test:transforms": "node tools/tests/test-transforms.mjs",
+    "test:desktop": "node tools/smoke/smoke-desktop.mjs",
+    "inventory": "node tools/legacy/inventory-legacy.mjs",
+    "catalog:build": "node tools/catalog/build-vehicle-catalog.mjs",
+    "test:editor-properties": "node tools/tests/test-editor-properties.mjs",
+    "test:whole-layout": "node tools/tests/test-whole-layout.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "2.12.4",

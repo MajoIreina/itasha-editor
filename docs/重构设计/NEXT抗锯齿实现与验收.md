@@ -50,6 +50,6 @@
 - `next/crates/renderer/src/gpu/temporal.rs`：模式、尺寸预算、历史状态、GPU 资源与管线缓存。
 - `next/crates/renderer/src/gpu/temporal.wgsl`：深度重投影、历史拒绝、邻域裁剪与融合。
 - `next/crates/renderer/src/gpu/effects.rs`、`post.wgsl`：时域解析与最终缩小输出。
-- `next/crates/renderer/src/gpu.rs`、`next/src-tauri/src/viewport.rs`：相机矩阵、编辑失效、按需帧调度及状态。
-- `next/crates/contracts/src/lib.rs`、`next/src/SettingsPanel.tsx`：配置校验和用户选项。
-- `next/tools/smoke-desktop.mjs`：原生 GPU 截图及桌面回归。
+- `next/crates/renderer/src/gpu.rs`、`next/src-tauri/src/platform/viewport.rs`：相机矩阵、编辑失效、按需帧调度及状态。
+- `next/crates/contracts/src/lib.rs`、`next/src/features/settings/SettingsPanel.tsx`：配置校验和用户选项。
+- `next/tools/smoke/smoke-desktop.mjs`：原生 GPU 截图及桌面回归。

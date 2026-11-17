@@ -1,0 +1,7 @@
+.layer-properties .property-heading{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px}.layer-properties .property-heading h2{margin:0;font-size:12px}.property-heading small{color:var(--text-muted);font-size:10px}
+.layer-properties .property-group{border:0;padding:0;margin:14px 0;min-width:0}.property-group legend{color:var(--text-muted);font-size:11px;margin-bottom:8px}
+.layer-properties .layer-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.layer-fields label{min-width:0;font-size:10px;color:var(--text-muted)}.layer-properties .layer-fields input{width:100%;min-width:0;margin-top:5px;padding:6px;font-variant-numeric:tabular-nums}
+.layer-properties .ratio-lock{display:flex;align-items:center;gap:8px;font-size:11px;margin:10px 0;cursor:pointer}.layer-properties .ratio-lock input{width:14px;height:14px;margin:0;accent-color:var(--accent)}
+.layer-properties .property-error{display:block;color:var(--error-text);font-size:10px;line-height:1.5;margin-top:7px}
+.layer-properties input[aria-invalid=true]{border-color:var(--error-text)}
+.layer-properties .image-metadata{border-top:1px solid var(--border);padding-top:12px;margin-top:14px}.image-metadata h3{font-size:11px;font-weight:500;margin:0 0 8px}.layer-properties .image-metadata dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 10px;font-size:10px;margin:0;line-height:1.6}.image-metadata dt{color:var(--text-muted)}.image-metadata dd{margin:0;overflow-wrap:anywhere;text-align:right}

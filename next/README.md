@@ -1,86 +1,75 @@
-# 痛车编辑器 Next
+# 痛车编辑器 NEXT
 
-2026-11-17 起，本工作区为仓库唯一开发主线，版本保持 0.3.0-dev.6；架构为 Rust + Tauri 2 + React / TypeScript + wgpu。根 README、AGENTS 和 docs/开发与构建.md 为当前入口。
-已实现欢迎页 → 车型选择 → 车漆/轮毂/内饰/方向盘选配 → 工作区流程，以及本机设计库加载、重命名、保存、重开、撤销/重做和关闭保护。早期无车型草稿继续兼容。
-工作区支持上下/左右分屏、拖动比例；右上角设置管理布局、性能偏好、快捷键与目录路径。见 [设置增量说明](../docs/重构设计/工作区与设置增量-2026-11-09.md)。
-右侧新增素材库、图层管理、插入图形和插入文字面板，支持高度调节与最小化并保存布局；已接入首批图形、文字、图片及图层编辑。见 [面板说明](../docs/重构设计/右侧工具面板-2026-11-10.md)。
-新建流程、目录来源及保存契约见 [欢迎与选配说明](../docs/重构设计/欢迎与车型选配流程-2026-11-09.md)。页面使用软件自己的 UI 与车辆形态示意。
-已接入 SU7 Max 的 Rust/wgpu 原生静态 PBR 预览，按选配加载车身、轮组、方向盘和内饰。漆面映射当前为 v24 mirrored（左前下翼子板镜像版）：18 个可编辑部件（含尾厢，左前下翼子板采用 v24 镜像近似），21 个原始候选与历史筛选规则见各映射包 README。2D/3D 均支持素材选择、移动、八方向缩放、旋转，以及单图层跨面投影。导出和旧工程迁移尚未接入；用户已指定以 NEXT 作为开发基线，此切换不代表完整发布验收。当前小素材跨面传播有 1 项回归失败，见 [主线切换记录](../docs/NEXT主线切换-2026-11-17.md)。资产路径、测量与原生宿主限制见 [3D 首批接入记录](../docs/重构设计/SU7原生渲染首批接入-2026-11-10.md)，本次缺面修复见 [漆面区域缺失修复](../docs/重构设计/NEXT漆面区域缺失修复-2026-11-12.md)。
+2026-11-17 起，`next/` 为仓库唯一应用工作区，版本保持 `0.3.0-dev.6`。技术栈为 Rust + Tauri 2 + React / TypeScript + 原生 wgpu。目录已按功能和宿主职责实际重排，后续开发沿用此结构。
 
-画布映射、资源预算、验证与当前曲面限制见 [画布首批接入记录](../docs/重构设计/画布与曲面贴花首批接入-2026-11-10.md)。
+入口：[整体结构](../docs/项目结构.md) · [模块架构](../docs/模块架构.md) · [开发与构建](../docs/开发与构建.md) · [离线资源](../docs/离线资源.md) · [开发规则](../AGENTS.md)。
 
-本轮跨面映射、控制点、兼容规则及验证证据见 [跨面素材与双端编辑](../docs/重构设计/跨面素材与双端编辑-2026-11-10.md)。环绕/顶部投影不是无畸变施工展开。
+## 当前能力
 
-查看器新增 FXAA 抗锯齿、有效的帧率/分辨率设置、相机地平线和距离限位、程序化天空盒及场景时间。入口为设置中的“性能”和“场景”。实现、测试和性能口径见 [查看器画质与场景控制](../docs/重构设计/查看器画质与场景控制-2026-11-10.md)。
+已实现欢迎、新建和车型基础选配，SU7 Max 模块化原生 3D，2D/3D 素材编辑、图层变换、工程保存/重开、撤销/重做与关闭保护。工作区支持分屏、工程库和右侧面板布局；设置包括主题、快捷键、场景、性能偏好和目录。
+
+当前接入车漆、轮毂、内饰、方向盘四轴。生产漆面为 v24 mirrored；左前下翼子板使用镜像近似。跨面投影不等于无畸变施工展开。其他车型完整适配、黑化/碳纤维独立轴、施工导出、旧工程迁移、自动保存与发布验收尚未完成。
+
+完整 Rust 回归有 1 项已知跨面传播失败，见 [主线切换记录](../docs/NEXT主线切换-2026-11-17.md) 和 [本次结构验证](../docs/结构整理-2026-11-17.md)。
+
+## 目录与职责
+
+| 路径 | 内容 |
+| --- | --- |
+| `src/main.tsx` | React 挂载入口 |
+| `src/app/` | 应用装配、导航、动作队列与关闭保护 |
+| `src/features/` | onboarding、projects、settings、workspace、editor、viewport |
+| `src/bridge/`、`src/shared/` | 基础 Tauri 契约与共用颜色、主题、输入工具 |
+| `src-tauri/src/host.rs` | Tauri 服务与窗口装配 |
+| `src-tauri/src/commands/` | editor、assets、viewport IPC |
+| `src-tauri/src/adapters/`、`platform/` | SU7 资源适配与 Windows 原生视口 |
+| `crates/` | contracts、domain、application、persistence、surface-map、renderer |
+| `catalog/`、`assets/paint/` | 车型目录与当前/回归漆面数据 |
+| `tools/` | checks、tests、smoke、catalog、assets、legacy 工具 |
+
+详细树与“改哪个功能看哪个文件”见 [项目结构](../docs/项目结构.md)，工具参数与资源前提见 [工具说明](tools/README.md)。
 
 ## 开发与构建
 
-在本目录执行。当前已验证 Windows x64、Rust 1.97.1、Node 24.22.1、pnpm 11.25.0、MSVC/Windows SDK 和 WebView2。
+在本目录执行，环境与版本以锁文件及 [构建说明](../docs/开发与构建.md) 为准：
 
-    pnpm install --frozen-lockfile
-    pnpm desktop:dev
+```powershell
+pnpm install --frozen-lockfile
+pnpm desktop:dev
+```
 
-构建独立 exe：
+```powershell
+pnpm desktop:build
+```
 
-    pnpm desktop:build
+发行输出为 `target/release/itasha-desktop.exe`，当前不生成安装器，Windows 需要 WebView2。单独 `pnpm dev` 只预览界面。SU7 GLB/贴图包独立恢复，不存入源码仓库。
 
-输出 target/release/itasha-desktop.exe。当前不生成安装包；Windows 需要已安装 WebView2。
-单独执行 pnpm dev 只能预览界面，没有伪造的浏览器后端。
+## 状态与数据
 
-## 实现边界
+React 使用 Rust 的只读 View，通过应用命令更新工程。Application 在 blocking worker 中以 Mutex 串行运行；模型准备与素材操作使用 blocking worker，原生 wgpu 线程处理渲染和视口消息。
 
-| 模块 | 责任 |
-| --- | --- |
-| src/ | React 界面、只读投影、Tauri bridge |
-| src-tauri/ | 窗口、权限、异步命令入口 |
-| crates/contracts/ | 版本、会话、错误和读模型 |
-| crates/domain/ | 工程文档、名称校验、修订和撤销历史 |
-| crates/application/ | 串行应用服务、会话校验、重复请求保护 |
-| crates/renderer/ | 通用静态 GLB 读取、PBR 材质、原生 wgpu 渲染与相机 |
-| crates/persistence/ | 本地草稿、校验摘要、替换写入、工作目录独占锁 |
-| tools/ | 归档、资源清点、静态边界检查、真实桌面 smoke |
+正常工程位于 Tauri `app_data_dir`，标识 `studio.itasha.editor.next`，与旧版 `projects/` 分离。工程内部 JSON 含车型、四轴选配、图层和内容摘要；图片规范化为 PNG 后保存到 `blobs/`。损坏或不支持的工程逐文件隔离并在列表显示警告，当前没有修复 UI。
 
-前端工程入口为 read_view、execute、close_clean 与受限目录选择 choose_directory；3D 入口为 viewport_load、viewport_bounds、viewport_status、viewport_reset、viewport_surface、viewport_decal；素材入口为 import_image、asset_bytes。Rust 按当前工程会话选择资产，React 不传任意文件路径或几何数据。生产 UI 不读取旧引擎资源，也不创建 iframe 或业务 HTTP 请求。Vite 是开发服务器。
-AppManifest 自动生成自定义命令权限，capabilities/main.json 只授予主窗口需要的命令和事件监听。
+撤销历史最多 100 条、元数据上限 16 MiB，重开时建立新 session，历史不跨重开持久化。成功请求保留最近 256 个 ID 用于进程内重试去重。保存使用临时文件、同步和替换写入；自动保存尚未实现。部分缓存/性能偏好仅保存，不能据设置项存在推断全部生效。
 
-工程存储于 Tauri app_data_dir，标识 studio.itasha.editor.next，独立于旧版 projects/。
-内部 JSON 保存草稿、车型 ID、四类基础选配及图层映射，8 MiB 上限，含内容 SHA-256；图片规范化为 PNG 后按内容摘要保存于 blobs/；不能当作已交付的便携工程 v2。
-同目录临时文件、文件同步和替换写入保证正常运行下完整文件切换，不声明断电持久性。
-同一工作目录仅允许一个持久化服务实例。
+## 验证与辅助工具
 
-应用服务运行于 blocking worker 并通过 Mutex 串行执行。小草稿保存期间编辑排队。
-模型准备和素材操作使用 blocking worker，原生渲染线程处理视口消息；遮罩和贴花使用二进制 IPC。不可变快照后台保存与完整任务调度属于后续增量。
-撤销覆盖重命名和图层编辑，最多 100 条并限制历史元数据 16 MiB；重开工程会建立新 session epoch，历史不跨重开持久化。
-成功请求保留最近 256 条 ID 与操作指纹，用于进程内重试去重；不是跨重启事务日志。
-自动保存尚未实现，设置中保持关闭且拒绝启用。
-列表遇到损坏工程时会显式报错，当前尚无逐文件隔离和修复 UI。
+```powershell
+pnpm build
+pnpm check:boundary
+pnpm test:transforms
+pnpm test:editor-properties
+pnpm test:whole-layout
+cargo fmt --all --check
+cargo test --workspace --exclude itasha-desktop --locked
+cargo build -p itasha-desktop --features custom-protocol --locked
+$env:ITASHA_SMOKE_EXE = 'target/debug/itasha-desktop.exe'
+$env:ITASHA_MODEL_ROOT = 'L:/SU7/3D'
+pnpm test:desktop
+```
 
-## 验证
+桌面 smoke 启动真实 Tauri，使用 NEXT 自身的 Playwright/pngjs 和独立 `.reports/` 数据，验证 IPC、原生视口、编辑与保存重开。报告和构建产物不纳入 Git；GPU readback 不代替操作系统合成及人工车漆核对。
 
-    pnpm build
-    pnpm check:boundary
-    pnpm test:transforms
-    cargo fmt --all --check
-    cargo test --workspace --exclude itasha-desktop --locked
-    cargo build -p itasha-desktop --features custom-protocol --locked
-    pnpm test:desktop
+`pnpm catalog:build` 从根车型来源生成静态目录，重新生成前核对已保存工程 ID/catalogVersion 兼容性。`pnpm inventory` 和 `tools/legacy/` 只用于本机历史资源。`tools/assets/` 的模型审计与漆面脚本需要独立恢复输入，不是日常构建前提。
 
-桌面 smoke 使用本工作区自己的 devDependencies（playwright-core 与 pngjs），不读取旧 Electron 目录。ITASHA_MODEL_ROOT 可指定模型目录，缺省为相对 NEXT 的 ../../3D。
-它启动真实调试版 Tauri，用独立 .reports/ 数据目录测试 Rust IPC、保存、重开和 Windows 关闭事件。
-ITASHA_TEST_DATA_DIR 用于验收进程隔离工程目录。WebView2 调试端口由测试进程临时开启，应用源码不会启用它。
-报告、截图、WebView 数据和编译产物均不纳入 Git。
-
-    pnpm inventory
-
-资源清点只读旧车型清单，流式计算哈希，不执行旧引擎、不联网、不复制模型，输出 .reports/legacy-assets.json。
-资源文件较大，扫描会占用磁盘带宽。
-
-    node tools/audit-model-package.mjs
-
-只读清点用户处理后的 9 个模块 GLB 与 119 张 PNG，输出 .reports/model-package-audit.json。默认直接使用工作区旁 3D/Blender/software，不复制原资源。移动程序后可在设置中选择模型包目录。
-
-    pnpm catalog:build
-
-从本地捕获数据生成 next/catalog/vehicles.json。该目录作为静态数据编入 Rust，不执行旧代码；重新生成前应评估已保存工程的 catalogVersion / ID 兼容性。
-
-归档与下一步参见 [实施记录](../docs/重构设计/实施记录-2026-11-09.md)。
+有日期的设计资料位于 [重构设计](../docs/重构设计/README.md)，只反映对应阶段；当前事实以源码、本文和最新验证记录为准。

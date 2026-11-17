@@ -25,14 +25,18 @@ pnpm desktop:build
 
 ## 项目目录
 
+源码已按职责实际重排，完整目录、调用流程、资源与运行数据位置见 [项目整体结构](docs/项目结构.md)。
+
 | 路径 | 内容 |
 | --- | --- |
-| `next/src/` | React 界面与 Tauri bridge |
-| `next/src-tauri/` | Windows 宿主、命令权限与车型适配 |
+| `next/src/app/` | 应用装配、导航与动作队列 |
+| `next/src/features/` | 欢迎、工程、设置、工作区、2D 编辑和 3D 容器 |
+| `next/src/bridge/`、`next/src/shared/` | Tauri 契约、共用颜色/主题/输入工具 |
+| `next/src-tauri/src/` | `host` 启动、`commands` 命令、`adapters` 车型适配、`platform` 原生视口 |
 | `next/crates/` | 契约、领域、应用服务、存储、曲面与渲染器 |
 | `next/catalog/` | 编入 Rust 的车型选配数据 |
 | `next/assets/paint/` | 当前运行映射与必要回归样本 |
-| `next/tools/` | 桌面 smoke、边界检查与资产处理工具 |
+| `next/tools/` | 按 checks、tests、smoke、catalog、assets、legacy 分类的工具 |
 | `config/vehicles.json`、`vehicles/*/backend-adapter.json` | 车型目录生成所需的来源数据 |
 | `docs/` | 当前开发约定、验收记录与有日期的重构设计资料 |
 
@@ -55,4 +59,6 @@ pnpm test:desktop
 
 桌面 smoke 需要构建后的 NEXT exe 和独立恢复的 SU7 模型；测试依赖安装于 NEXT 自己的工作区。当前状态及失败回归见 [性能与验收](docs/性能与验收.md)。
 
-开发入口：[NEXT 说明](next/README.md) · [模块架构](docs/模块架构.md) · [接口与车型适配](docs/接口与车型适配.md) · [开发规则](AGENTS.md)。车辆资产来源说明见 [NOTICE.txt](NOTICE.txt)。
+本次目录重排后的构建、真实桌面 35 项和既有失败复现见 [结构整理与验证](docs/结构整理-2026-11-17.md)。
+
+开发入口：[NEXT 说明](next/README.md) · [项目结构](docs/项目结构.md) · [模块架构](docs/模块架构.md) · [接口与车型适配](docs/接口与车型适配.md) · [开发规则](AGENTS.md)。车辆资产来源说明见 [NOTICE.txt](NOTICE.txt)。
