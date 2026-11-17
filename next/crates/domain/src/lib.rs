@@ -188,16 +188,28 @@ impl Session {
     /// Host-only upgrade after proving that the authored surface geometry is unchanged.
     /// Rebind history too: undo must never restore an obsolete mapping fingerprint.
     pub fn rebind_surface_connections(&mut self, from: &str, to: &str) -> AppResult<bool> {
+        self.remap_surface_mapping(from, to, |_| Ok(()))
+    }
+
+    /// Apply a host-verified geometric migration atomically to the document and
+    /// every undo/redo state. A failed anchor must leave the entire session intact.
+    pub fn remap_surface_mapping(
+        &mut self,
+        from: &str,
+        to: &str,
+        mut remap: impl FnMut(&mut itasha_contracts::Layer) -> AppResult<()>,
+    ) -> AppResult<bool> {
         if self.document.editor.model_fingerprint.as_deref() != Some(from) || from == to {
             return Ok(false);
         }
         if !itasha_contracts::valid_hash(from) || !itasha_contracts::valid_hash(to) {
             return Err(AppError::new("model-mismatch", "漆面接缝升级指纹无效。"));
         }
-        let rebind = |editor: &mut EditorDocument| -> AppResult<()> {
+        let mut rebind = |editor: &mut EditorDocument| -> AppResult<()> {
             if editor.model_fingerprint.as_deref() == Some(from) {
                 editor.model_fingerprint = Some(to.into());
                 for layer in &mut editor.layers {
+                    remap(layer)?;
                     if let Some(anchor) = &mut layer.placement.anchor {
                         anchor.paint_surface_fingerprint = to.into();
                     }
@@ -449,6 +461,78 @@ mod tests {
         );
         session.document.validate().unwrap();
     }
+    #[test]
+    fn geometric_upgrade_is_atomic_and_reprojects_undo_redo() {
+        let vehicle = vehicle_catalog().iter().find(|v| v.id == "su7").unwrap();
+        let mut session = Session::new(
+            ProjectDocument::configured("迁移", vehicle.id.clone(), vehicle.defaults.clone())
+                .unwrap(),
+            true,
+        );
+        let original = layer();
+        session
+            .edit(EditOperation::Insert {
+                layer: original.clone(),
+                fingerprint: "a".repeat(64),
+            })
+            .unwrap();
+        let mut moved = original.clone();
+        moved.placement.x_mm += 42.;
+        session
+            .edit(EditOperation::Update {
+                layer: moved.clone(),
+            })
+            .unwrap();
+        session.undo(false).unwrap();
+        let before = serde_json::to_value(&session.document).unwrap();
+        let history = session.history.clone();
+        let future = session.future.clone();
+        let result = session.remap_surface_mapping(&"a".repeat(64), &"b".repeat(64), |layer| {
+            if layer.placement.x_mm == moved.placement.x_mm {
+                return Err(AppError::new("model-mismatch", "unmapped history anchor"));
+            }
+            layer.placement.x_mm += 100.;
+            Ok(())
+        });
+        assert!(result.is_err());
+        assert_eq!(serde_json::to_value(&session.document).unwrap(), before);
+        assert_eq!(session.history, history);
+        assert_eq!(session.future, future);
+        session
+            .remap_surface_mapping(&"a".repeat(64), &"b".repeat(64), |layer| {
+                layer.placement.x_mm += 100.;
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(
+            session.document.editor.layers[0].placement.x_mm,
+            original.placement.x_mm + 100.
+        );
+        session.undo(true).unwrap();
+        assert_eq!(
+            session.document.editor.layers[0].placement.x_mm,
+            moved.placement.x_mm + 100.
+        );
+        session.undo(false).unwrap();
+        assert_eq!(
+            session.document.editor.layers[0].placement.x_mm,
+            original.placement.x_mm + 100.
+        );
+        assert_eq!(
+            session.document.editor.layers[0].placement.width_mm,
+            original.placement.width_mm
+        );
+        assert_eq!(
+            session.document.editor.layers[0]
+                .placement
+                .anchor
+                .as_ref()
+                .unwrap()
+                .paint_surface_fingerprint,
+            "b".repeat(64)
+        );
+    }
+
     #[test]
     fn canvas_changes_are_atomic_and_restore_saved_content() {
         let vehicle = vehicle_catalog().iter().find(|v| v.id == "su7").unwrap();

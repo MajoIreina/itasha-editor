@@ -49,7 +49,7 @@ export function useCanvasEditor(project: Project | null, active: boolean, modelD
     let disposed = false;
     void Promise.all(renderer.surfaces.map(async info => {
       const bytes = await invoke<ArrayBuffer>('viewport_surface', { session: project.session, id: info.id });
-      return { ...info, mask: maskPath(new Float32Array(bytes), info) };
+      return { ...info, mask: maskPath(new Float64Array(bytes), info) };
     })).then(values => { if (!disposed) { setSurfaces(values); setSurfaceId(old => values.some(s => s.id === old) ? old : values[0]?.id ?? ''); } })
       .catch(e => { if (!disposed) onError(errorText(e)); });
     return () => { disposed = true; };

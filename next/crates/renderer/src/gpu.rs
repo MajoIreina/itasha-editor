@@ -22,6 +22,27 @@ fn ground_parameters(min: Vec3, max: Vec3) -> ([f32; 4], [f32; 4]) {
     )
 }
 
+fn focus_angles(local_normal: Vec3, part_normal: Vec3) -> (f32, f32) {
+    let part_normal = part_normal.normalize_or_zero();
+    let mut normal = local_normal.normalize_or_zero();
+    if normal.dot(part_normal) < 0. {
+        normal = -normal;
+    }
+    let horizontal = Vec3::new(normal.x, 0., normal.z);
+    let part_horizontal = Vec3::new(part_normal.x, 0., part_normal.z);
+    // Preserve the local outward azimuth on sloping panels. Only a nearly
+    // vertical normal needs the part direction (or the default view) as a fallback.
+    let yaw = if horizontal.length_squared() > 1e-8 {
+        horizontal.x.atan2(horizontal.z)
+    } else if part_horizontal.length_squared() > 1e-8 {
+        part_horizontal.x.atan2(part_horizontal.z)
+    } else {
+        -2.25
+    };
+    let pitch = if normal.y.abs() > 0.6 { 1.15 } else { 0.1 };
+    (yaw, pitch)
+}
+
 pub struct Camera {
     pub target: Vec3,
     pub yaw: f32,
@@ -129,6 +150,80 @@ mod tests {
         camera.zoom(1e6);
         assert!(camera.pitch <= 1.45);
         assert!(camera.distance >= camera.radius * 0.3);
+    }
+    #[test]
+    fn focus_preserves_sloping_rear_front_and_side_azimuths() {
+        for (label, local_normal, part_normal) in [
+            ("rear", Vec3::new(0.55, 0.82, 0.16), Vec3::X),
+            ("front", Vec3::new(-0.55, 0.82, -0.16), -Vec3::X),
+            ("left", Vec3::new(0.14, 0.82, 0.55), Vec3::Z),
+            ("right", Vec3::new(-0.14, 0.82, -0.55), -Vec3::Z),
+        ] {
+            let (yaw, pitch) = focus_angles(local_normal, part_normal);
+            let camera = Camera {
+                target: Vec3::new(2.43, 0.66, 0.38),
+                yaw,
+                pitch,
+                distance: 1.,
+                ..Camera::default()
+            };
+            for aspect in [0.5, 1., 2.] {
+                let offset = camera.eye(aspect) - camera.target;
+                let horizontal = Vec3::new(offset.x, 0., offset.z).normalize();
+                let expected = Vec3::new(local_normal.x, 0., local_normal.z).normalize();
+                assert!(horizontal.dot(expected) > 1. - 1e-6, "{label}");
+                assert!(offset.dot(part_normal) > 0., "{label}");
+                assert!(offset.y > 0., "{label}");
+            }
+            assert_eq!(pitch, 1.15);
+        }
+    }
+    #[test]
+    fn focus_orients_local_normals_toward_the_part() {
+        let outward = Vec3::new(0.55, 0.82, 0.16);
+        let (yaw, pitch) = focus_angles(-outward, Vec3::X);
+        let camera = Camera {
+            yaw,
+            pitch,
+            distance: 1.,
+            ..Camera::default()
+        };
+        let offset = camera.eye(1.) - camera.target;
+        assert!(offset.x > 0.);
+        assert!(offset.z > 0.);
+        assert!(offset.y > 0.);
+        assert_eq!((yaw, pitch), focus_angles(outward, Vec3::X));
+        assert_eq!(focus_angles(Vec3::X, Vec3::X).1, 0.1);
+    }
+    #[test]
+    fn focus_vertical_normals_use_part_azimuth_or_the_default() {
+        for local_normal in [Vec3::Y, Vec3::new(-1e-6, 1., 1e-6)] {
+            for part_normal in [Vec3::X, -Vec3::X, Vec3::Z, -Vec3::Z] {
+                let (yaw, pitch) = focus_angles(local_normal, part_normal);
+                let camera = Camera {
+                    yaw,
+                    pitch,
+                    distance: 1.,
+                    ..Camera::default()
+                };
+                let offset = camera.eye(1.) - camera.target;
+                let horizontal = Vec3::new(offset.x, 0., offset.z).normalize();
+                assert!(horizontal.dot(part_normal) > 1. - 1e-6);
+                assert_eq!(pitch, 1.15);
+            }
+        }
+        for part_normal in [Vec3::Y, -Vec3::Y, Vec3::ZERO] {
+            let (yaw, pitch) = focus_angles(Vec3::Y, part_normal);
+            assert_eq!(yaw, Camera::default().yaw);
+            assert_eq!(pitch, 1.15);
+            let camera = Camera {
+                yaw,
+                pitch,
+                distance: 1.,
+                ..Camera::default()
+            };
+            assert!((camera.eye(1.) - camera.target).is_finite());
+        }
     }
     #[test]
     fn reset_keeps_vehicle_bounds_inside_wide_and_narrow_viewports() {
@@ -735,27 +830,17 @@ impl Gpu {
             return;
         };
         let p = &layer.placement;
-        let Some(target) = g.world(&layer, glam::Vec2::new(p.x_mm as f32, p.y_mm as f32)) else {
+        let Some((target, u, v)) = g.anchor_frame(&layer) else {
             return;
         };
         let Some(info) = g.info(&p.surface_id) else {
             return;
         };
-        let center = glam::Vec2::new(p.x_mm as f32, p.y_mm as f32);
-        let u = g.world(&layer, center + glam::Vec2::X).unwrap_or(target) - target;
-        let v = g.world(&layer, center + glam::Vec2::Y).unwrap_or(target) - target;
-        let mut normal = u.cross(v).normalize_or_zero();
-        if normal.dot(Vec3::from_slice(&info.projection[2][..3])) < 0. {
-            normal = -normal;
-        }
+        let (yaw, pitch) = focus_angles(u.cross(v), Vec3::from_slice(&info.projection[2][..3]));
         self.camera.target = target;
         self.camera.distance = (p.width_mm.max(p.height_mm) as f32 / 1000. * 3.2).clamp(0.8, 8.);
-        self.camera.yaw = if normal.y.abs() > 0.6 {
-            -2.25
-        } else {
-            normal.x.atan2(normal.z)
-        };
-        self.camera.pitch = if normal.y.abs() > 0.6 { 1.15 } else { 0.1 };
+        self.camera.yaw = yaw;
+        self.camera.pitch = pitch;
         self.effects.invalidate();
         self.capture_next = true;
     }

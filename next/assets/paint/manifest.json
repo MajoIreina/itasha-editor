@@ -1,10 +1,20 @@
 {
   "schemaVersion": 1,
-  "baselineDate": "2026-11-17",
-  "runtimePaint": "su7-v24-mirrored/paint-map.json",
-  "paintFingerprint": "109ba0aa146625f99b35050b2682edb6c0ad15b72e180c515c58867fa7d275d7",
+  "baselineDate": "2026-11-18",
+  "runtimePaint": "su7-v25-verified/paint-map.json",
+  "paintFingerprint": "fc2d6130e310a026a57dc0d56f679e465b6a27773a7397168b142d2ce0e1aa60",
   "modelFingerprint": "99ab99adcfddfb681e966a0309849eb534d13aacb480d34b3f27f69e29b07193",
   "records": [
+    {
+      "path": "su7-v25-verified/paint-map.json",
+      "bytes": 61028708,
+      "sha256": "03db3695ec78d4112d39dfef08483b6d257b075e972ed89b7694606c84ddeb11"
+    },
+    {
+      "path": "su7-v25-verified/build-report.json",
+      "bytes": 37071,
+      "sha256": "226a05a1aac4814becf0b8b93d6f39b7d971f13c5247e5221edfda872c69cf46"
+    },
     {
       "path": "su7-v24-mirrored/paint-map.json",
       "bytes": 54032814,

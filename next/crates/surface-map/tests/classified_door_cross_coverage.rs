@@ -1,15 +1,10 @@
 use glam::{Vec2, Vec3};
 use itasha_surface_map::{PaintSurfaceMap, barycentric_2d, topology::Topology};
-use std::{collections::HashMap, path::Path, sync::OnceLock};
+use std::collections::HashMap;
+mod support;
 
 fn classified_map() -> &'static PaintSurfaceMap {
-    static MAP: OnceLock<PaintSurfaceMap> = OnceLock::new();
-    MAP.get_or_init(|| {
-        let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../assets/paint/su7-v21-classified-only/paint-map.json");
-        serde_json::from_slice(&std::fs::read(path).expect("committed classified SU7 paint map"))
-            .expect("valid classified SU7 paint map")
-    })
+    support::runtime_map()
 }
 
 #[test]

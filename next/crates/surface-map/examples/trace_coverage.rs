@@ -1,14 +1,23 @@
-//! Diagnostic for a coverage query that crosses the vehicle in v24.
-use glam::Vec3;
+//! Diagnostic for the lower-fender coverage regression, using the runtime map.
 use itasha_surface_map::{PaintSurfaceMap, topology::Topology};
 use std::path::PathBuf;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = PathBuf::from(
-        std::env::args()
-            .nth(1)
-            .unwrap_or_else(|| "assets/paint/su7-v24-mirrored/paint-map.json".into()),
-    );
+    let path = PathBuf::from(std::env::args().nth(1).unwrap_or_else(|| {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let manifest: serde_json::Value = serde_json::from_slice(
+            &std::fs::read(root.join("assets/paint/manifest.json")).expect("paint manifest"),
+        )
+        .expect("paint manifest JSON");
+        root.join("assets/paint")
+            .join(
+                manifest["runtimePaint"]
+                    .as_str()
+                    .expect("runtime paint path"),
+            )
+            .to_string_lossy()
+            .into_owned()
+    }));
     let map: PaintSurfaceMap = serde_json::from_slice(&std::fs::read(path)?)?;
     map.validate()?;
     let triangles: std::collections::HashMap<_, _> =

@@ -4,37 +4,143 @@ use itasha_renderer::assets::{self, Paint, Plan};
 use serde_json::Value;
 use std::path::PathBuf;
 
-/// Superseded maps that upgrade by fingerprint rebinding: v21 (classified-only),
-/// v22 (whole-car seams) and v23 (restored parts). The v24 mirror keeps every
-/// triangle except the replaced `su7.front-left-lower-fender` part, whose chart
-/// layout changed, so layers on that part keep their 3D placement but are drawn
-/// in the mirrored chart.
-pub const PREVIOUS_PAINTS: &[&str] = &[
-    "b16c24a5ff3ba086c545841dd92fd5d0a99ea50ab0cd270b94caca9d8b767db1",
-    "cc2835d5d4035ef0e4541ef4d9f5fd2da5f671b9c0808a0538843c497a87f671",
-    "5528f079561b12cb3dee51c495f6507ad7f58a291902afa0583353064b5c52e3",
+/// A changed chart requires source-barycentric reprojection, including history.
+/// Never claim that a fingerprint-only rebind preserves saved placement.
+const PREVIOUS_PAINTS: &[(&str, &str)] = &[
+    (
+        "b16c24a5ff3ba086c545841dd92fd5d0a99ea50ab0cd270b94caca9d8b767db1",
+        "su7-v21-classified-only/paint-map.json",
+    ),
+    (
+        "cc2835d5d4035ef0e4541ef4d9f5fd2da5f671b9c0808a0538843c497a87f671",
+        "su7-v22-whole-car/paint-map.json",
+    ),
+    (
+        "5528f079561b12cb3dee51c495f6507ad7f58a291902afa0583353064b5c52e3",
+        "su7-v23-restored/paint-map.json",
+    ),
+    (
+        "109ba0aa146625f99b35050b2682edb6c0ad15b72e180c515c58867fa7d275d7",
+        "su7-v24-mirrored/paint-map.json",
+    ),
 ];
-pub const CURRENT_PAINT: &str = "109ba0aa146625f99b35050b2682edb6c0ad15b72e180c515c58867fa7d275d7";
 
-/// Each predecessor may upgrade because every one of its triangles survives
-/// unchanged in the current map; only missing parts and faces were appended.
-/// The surface-map regression test proves the superset relation.
-pub fn verified_seam_upgrade(plan: &Plan, fingerprint: Option<&str>) -> AppResult<bool> {
-    if !fingerprint.is_some_and(|value| PREVIOUS_PAINTS.contains(&value)) {
+fn manifest() -> &'static Value {
+    static MANIFEST: std::sync::OnceLock<Value> = std::sync::OnceLock::new();
+    MANIFEST.get_or_init(|| {
+        serde_json::from_str(include_str!("../../../assets/paint/manifest.json"))
+            .expect("bundled paint manifest")
+    })
+}
+
+fn paint_candidates(relative: &str) -> Vec<PathBuf> {
+    let relative = format!("assets/paint/{relative}");
+    let mut candidates = vec![];
+    if let Ok(exe) = std::env::current_exe() {
+        for parent in exe.ancestors().skip(1) {
+            candidates.push(parent.join(&relative));
+        }
+    }
+    candidates.push(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join(relative),
+    );
+    candidates
+}
+
+pub fn upgrade_mapping(
+    app: &mut itasha_application::Application,
+    plan: &Plan,
+    session: &SessionRef,
+    fingerprint: &str,
+) -> AppResult<bool> {
+    let current = manifest()["paintFingerprint"]
+        .as_str()
+        .expect("paint fingerprint");
+    if fingerprint == current {
         return Ok(false);
     }
+    let Some((_, predecessor)) = PREVIOUS_PAINTS
+        .iter()
+        .find(|(hash, _)| *hash == fingerprint)
+    else {
+        return Ok(false);
+    };
     let Some(path) = &plan.paint_map else {
         return Ok(false);
     };
     let map: itasha_surface_map::PaintSurfaceMap =
         serde_json::from_slice(&std::fs::read(path).map_err(AppError::io)?)
             .map_err(AppError::io)?;
-    if map.paint_fingerprint != CURRENT_PAINT {
+    if map.paint_fingerprint != current {
         return Ok(false);
     }
-    map.validate()
-        .map_err(|e| AppError::new("model-mismatch", e))?;
-    Ok(true)
+    let old_path = paint_candidates(predecessor)
+        .into_iter()
+        .find(|p| p.is_file())
+        .ok_or_else(|| {
+            AppError::new(
+                "paint-migration-unavailable",
+                "此工程需要对应旧漆面地图才能安全迁移，请恢复原映射包后重试。",
+            )
+        })?;
+    let old: itasha_surface_map::PaintSurfaceMap =
+        serde_json::from_slice(&std::fs::read(old_path).map_err(AppError::io)?)
+            .map_err(AppError::io)?;
+    if old.paint_fingerprint != fingerprint {
+        return Err(AppError::new("model-mismatch", "旧漆面地图指纹不匹配。"));
+    }
+    // This original face is physically on the front-left fender. Older masks
+    // also classified two overlapping fragments as rear-bumper paint.
+    let corrections = [itasha_surface_map::transition::SourcePartCorrection {
+        source_mesh: "body.glb/node/175/primitive/0",
+        primitive: 0,
+        source_triangle: 32590,
+        from_part: "su7.rear-bumper",
+        to_part: "su7.front-left-fender",
+    }];
+    let transition = itasha_surface_map::transition::MappingTransition::with_part_corrections(
+        &old,
+        &map,
+        &corrections,
+    )
+    .map_err(|e| AppError::new("model-mismatch", e))?;
+    app.remap_surface_mapping(session, fingerprint, current, |layer| {
+        let p = &mut layer.placement;
+        let anchor = p.anchor.as_ref().ok_or_else(|| {
+            AppError::new("paint-migration-unavailable", "旧图层缺少可迁移锚点。")
+        })?;
+        if anchor.paint_surface_fingerprint != fingerprint {
+            return Err(AppError::new("model-mismatch", "旧图层锚点指纹不匹配。"));
+        }
+        let mapped = transition
+            .reproject(
+                &anchor.source_triangle_id,
+                &p.surface_id,
+                anchor.barycentric.into(),
+                (p.rotation_deg as f32).to_radians(),
+            )
+            .map_err(|e| {
+                AppError::new(
+                    "paint-migration-unavailable",
+                    format!("图层“{}”无法安全迁移：{e}。原工程保持不变。", layer.name),
+                )
+            })?;
+        p.x_mm = f64::from(mapped.paint_uv.x);
+        p.y_mm = f64::from(mapped.paint_uv.y);
+        p.rotation_deg = f64::from(mapped.rotation_rad.to_degrees());
+        p.flip_x ^= mapped.reflected;
+        p.surface_id = mapped.part_id.clone();
+        p.anchor = Some(itasha_contracts::SurfaceAnchor {
+            part_id: mapped.part_id,
+            region_id: mapped.region_id,
+            source_triangle_id: mapped.triangle.stable_key(),
+            barycentric: mapped.barycentric.to_array(),
+            paint_surface_fingerprint: current.to_string(),
+        });
+        Ok(())
+    })
 }
 
 fn resolve_root(configured: &str) -> AppResult<PathBuf> {
@@ -150,18 +256,12 @@ pub fn plan(view: &itasha_application::View, session: &SessionRef) -> AppResult<
     };
     Ok(Plan {
         paint_map: Some({
-            let relative = "assets/paint/su7-v24-mirrored/paint-map.json";
             let mut candidates = vec![root.join("paint/paint-map.json")];
-            if let Ok(exe) = std::env::current_exe() {
-                for parent in exe.ancestors().skip(1) {
-                    candidates.push(parent.join(relative));
-                }
-            }
-            candidates.push(
-                std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-                    .join("..")
-                    .join(relative),
-            );
+            candidates.extend(paint_candidates(
+                manifest()["runtimePaint"]
+                    .as_str()
+                    .expect("runtime paint path"),
+            ));
             candidates
                 .into_iter()
                 .find(|p| p.is_file())

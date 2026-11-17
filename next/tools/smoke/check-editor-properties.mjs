@@ -80,8 +80,10 @@ export async function checkEditorProperties({page,ipc,waitProject,waitRenderer,r
     const inserted=await waitProject(p=>p.editor.layers.length===before.editor.layers.length+1);
     const image=inserted.editor.layers.at(-1);
     assert.equal(image.source.kind,'image');assert.equal(image.placement.aspectRatioLocked,true);
-    assert(await field('锁定纵横比').isChecked());
     const info=page.getByRole('region',{name:'图片基础信息',exact:true});
+    await info.waitFor();
+    await page.waitForFunction(() => document.querySelector('input[aria-label="锁定纵横比"]')?.checked === true);
+    assert(await field('锁定纵横比').isChecked());
     assert((await info.innerText()).includes(asset.name));
     assert((await info.innerText()).includes(`${asset.width} × ${asset.height} px`));
     await page.getByRole('button',{name:'删除图层',exact:true}).click();

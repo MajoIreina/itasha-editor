@@ -58,7 +58,7 @@ try {
   const audit = [];
   for (const tile of tiles) {
     const result = await page.evaluate(async ({ session, info }) => {
-      const values = new Float32Array(await window.__TAURI_INTERNALS__.invoke('viewport_surface', { session, id: info.id }));
+      const values = new Float64Array(await window.__TAURI_INTERNALS__.invoke('viewport_surface', { session, id: info.id }));
       const path = new Path2D();
       for (let i = 0; i < values.length; i += 6) {
         path.moveTo(values[i] * info.widthMm, values[i+1] * info.heightMm);

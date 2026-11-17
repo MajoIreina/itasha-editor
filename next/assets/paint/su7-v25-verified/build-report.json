@@ -1,0 +1,672 @@
+{
+  "schema": "itasha-reviewed-paint-build-evidence-v2",
+  "status": "verified-reviewed-exterior-with-documented-precision-limits",
+  "completedLocalDate": "2026-11-18",
+  "historicalEvidenceDirectoryDate": "2026-11-17",
+  "runtimeDestination": "next/assets/paint/su7-v25-verified/paint-map.json",
+  "candidate": {
+    "path": "next\\.reports\\paint-integrity-v24-20261117\\v25-conforming-strict-packed-hinges-r17\\paint-map.json",
+    "sha256": "03db3695ec78d4112d39dfef08483b6d257b075e972ed89b7694606c84ddeb11",
+    "bytes": 61028708,
+    "paintFingerprint": "fc2d6130e310a026a57dc0d56f679e465b6a27773a7397168b142d2ce0e1aa60",
+    "triangles": 118461,
+    "bodyPartCount": 18,
+    "connections": 779,
+    "originalConnections": 730,
+    "sourceHinges": 49
+  },
+  "sourceInputs": [
+    {
+      "path": "L:\\SU7\\3D\\Blender\\software\\body.glb",
+      "sha256": "99ab99adcfddfb681e966a0309849eb534d13aacb480d34b3f27f69e29b07193",
+      "bytes": 25426120
+    },
+    {
+      "path": "L:\\SU7\\3D\\decoded\\model\\carModel.portable.glb",
+      "sha256": "659fd91981def5a76883ba14c2965c72b48d1a5d2e7105fefdd369631aa0f7f7",
+      "bytes": 25776612
+    },
+    {
+      "path": "L:\\SU7\\3D\\source\\su7-materials.json",
+      "sha256": "3acce34d2d9f2d7af931981f46ed4a0660089fad9a9d2f355631c829a0db0d08",
+      "bytes": 540147
+    },
+    {
+      "path": "next\\assets\\paint\\su7-v24-mirrored\\paint-map.json",
+      "sha256": "0f1192aa68f0c8ee0d82080495a6030ba77be7e581609bcbb5165742a2a763f8",
+      "bytes": 54032814
+    },
+    {
+      "path": "next\\assets\\paint\\su7-v23-restored\\paint-map.json",
+      "sha256": "27dd76574292bf69afd079c88ce31da44b7e2dd676a5cc09ca68e7cfcd51b30f",
+      "bytes": 54030949
+    },
+    {
+      "path": "next\\.reports\\paint-integrity-v24-20261117\\v25-candidate-r4\\paint-map.json",
+      "sha256": "b84abdac4d6288f50e62b4b6a030980e81e142b911a8f7e94f99ce2746a3f4f1",
+      "bytes": 55309990
+    },
+    {
+      "path": "next\\.reports\\paint-integrity-v24-20261117\\full-component-visibility\\visibility.json",
+      "sha256": "02942ffbbd98310d607540dd36da4a1a8ac042a3e0f85490a06a357dc5d42510",
+      "bytes": 699110
+    },
+    {
+      "path": "next\\.reports\\paint-integrity-v24-20261117\\reviewed-source-hinges-r17.json",
+      "sha256": "011be85e7aba7baf1a8c4aad5170e02846df08068aa430e773c04ad7dbdb2e4e",
+      "bytes": 383506
+    },
+    {
+      "path": "next\\.reports\\paint-integrity-v24-20261117\\uv0-semantic-r17-reviewed-exclusions.json",
+      "sha256": "de12ab101686ea01d14acd08aa0196d345fa56ab2b2c3eded5cda5feacc967c1",
+      "bytes": 27660
+    }
+  ],
+  "environment": {
+    "python": "3.13.4",
+    "numpy": "2.4.4",
+    "shapely": "2.1.2"
+  },
+  "sourceIntegrity": {
+    "softwareModelUnmodified": true,
+    "sourcePaintMeshesRetained": 23,
+    "sourcePaintFacesRetained": 145948,
+    "sourcePaintAreaM2": 17.493490329097913,
+    "baselineComparison": "22 body meshes share the 10 micrometre coordinate signature; node92 aligned original indices are identical and vertex transform-rounding differences are <=0.000550570260545799 mm. Four OEM wheel meshes remain in the separate ACAL10.glb module. See baseline-geometry-followup-v2.json.",
+    "areaInterpretation": "OEM paint material area includes interior panels and return folds; subtracting mapped exterior union from this area does not measure missing exterior paint."
+  },
+  "leftLowerFender": {
+    "method": "actual left UV0, 90 degree rotation (u=v0,v=-u0), common right-chart millimetre scale, translation to nonnegative coordinates",
+    "source": "actual left source faces and own UV0; no mirrored nearest-face identities",
+    "reviewedFaces": 1436,
+    "sourceAreaM2": 0.10968183698106328,
+    "excludedBackFaces": 114,
+    "rootCause": "Historical v24 nearest-centroid mirror matching was many-to-one and the UV row permutation was applied twice. Correcting that permutation alone cannot make nearest-face mirroring a source-authoritative repair.",
+    "repairStageFragments": 1497,
+    "finalRuntimeFragments": 1598,
+    "fragmentCountInterpretation": "1497 belongs to the reviewed repair stage before conforming/repacking. The final r17 runtime map contains 1598 left-lower-fender fragments; source identities and audited source union remain authoritative."
+  },
+  "reviewedSelection": {
+    "basis": "reviewed-r4-selection",
+    "priorReviewedRepairRetainedFragments": 4208,
+    "rejectedUnreviewedExpansionMm2": 101.41603956706577,
+    "limitation": "Diagnostic r6/r8/r11 widened selection was withdrawn. The eight UV0-degenerate source triangles were individually reviewed with assembled first-hit rays and 5mm source-face detail images: visible seam/return lips are explicitly excluded from this revision ordinary exterior domain. No new mask area was added. The historical automatic deferral count includes inner/unclassified source material and is not an exterior omission count.",
+    "historicalAutoSelectionDeferredRegionCount": 2042,
+    "reviewedExcludedDegenerateUV0Faces": [
+      {
+        "sourceMesh": "body.glb/node/175/primitive/0",
+        "face": 27269,
+        "partId": "su7.front-right-lower-fender",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Downward-facing microscopic cap of a narrow panel return lip. Both primary neighboring source faces point toward +Z, into the right-side return; the orange segment lies on the folded seam edge, not across a broad outer panel.",
+        "sourceAreaMm2": 0.015177661794041342
+      },
+      {
+        "sourceMesh": "body.glb/node/175/primitive/0",
+        "face": 27494,
+        "partId": "su7.front-right-lower-fender",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Downward-facing continuation cap of the same narrow return lip. Its two main neighboring faces point toward +Z; the diagnostic orange segment is restricted to the seam-fold corner.",
+        "sourceAreaMm2": 0.0025303172890289716
+      },
+      {
+        "sourceMesh": "body.glb/node/175/primitive/0",
+        "face": 27498,
+        "partId": "su7.front-right-lower-fender",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Tapered fold cap at the upper turn of the same assembly lip. The orange triangle occupies the recessed narrow bevel between the inward-facing source27497 and the folded source27499, rather than a broad exterior sheet.",
+        "sourceAreaMm2": 0.36409565563539836
+      },
+      {
+        "sourceMesh": "body.glb/node/175/primitive/0",
+        "face": 27721,
+        "partId": "su7.front-right-lower-fender",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Long thin slanted side of the same return lip, visible through a panel joint. Neighbor source27720 points almost exactly +Z and source27722 turns back toward +Z; the orange fragment lies on the narrow folded sidewall between those return surfaces.",
+        "sourceAreaMm2": 8.782532096924133
+      },
+      {
+        "sourceMesh": "body.glb/node/78/primitive/0",
+        "face": 8512,
+        "partId": "su7.front-right-door",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Microscopic cap on the front upper door assembly edge. The orange sliver follows the top fold of the same small corner shown by source8998/8999/9041; the broad adjacent panel stays gray.",
+        "sourceAreaMm2": 0.008730103914486378
+      },
+      {
+        "sourceMesh": "body.glb/node/78/primitive/0",
+        "face": 8998,
+        "partId": "su7.front-right-door",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Microscopic seam-fold cap on the front upper door assembly edge. The orange sliver lies on the narrow vertical return at the edge of the broad gray panel.",
+        "sourceAreaMm2": 0.008947467786264164
+      },
+      {
+        "sourceMesh": "body.glb/node/78/primitive/0",
+        "face": 8999,
+        "partId": "su7.front-right-door",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Continuation of the same door seam-fold cap. The orange sliver follows the narrow return edge rather than interrupting the broad exterior sheet.",
+        "sourceAreaMm2": 0.008918131826309201
+      },
+      {
+        "sourceMesh": "body.glb/node/78/primitive/0",
+        "face": 9041,
+        "partId": "su7.front-right-door",
+        "disposition": "reviewed-excluded-seam-return-lip",
+        "normalExteriorPanelOmissionConfirmed": false,
+        "reason": "Lower turning cap of the same small door-edge fold. The orange sliver wraps around the corner at the narrow seam lip; surrounding broad panel geometry stays gray.",
+        "sourceAreaMm2": 0.00524809071269897
+      }
+    ],
+    "degenerateUV0SemanticReview": {
+      "status": "reviewed-exclusions-complete",
+      "reviewedFaces": 8,
+      "confirmedOrdinaryExteriorPanelOmissions": 0,
+      "report": "next\\.reports\\paint-integrity-v24-20261117\\uv0-semantic-r17-reviewed-exclusions.json",
+      "sha256": "de12ab101686ea01d14acd08aa0196d345fa56ab2b2c3eded5cda5feacc967c1"
+    }
+  },
+  "exactSourceUnion": {
+    "method": "Audit source-domain triangle unions with exact rational vertical integration.\n\nAll stored barycentrics are first deserialized as IEEE f32, lifted to exact\ndyadic rationals, normalized by the complete row sum, and clipped to the source\nsimplex. A rational segment arrangement partitions x into slabs; interval union\nboundaries are linear inside each slab, so their area integrals and both directed\ndifferences are exact. GLB world area is used only for the final units conversion.\nThis independently checks floating-point GEOS overlay on very thin source masks.\n",
+    "auditedSourceFaces": 94507,
+    "before": "reviewed repair r4",
+    "after": "r17 triangle dictionaries are exactly identical to audited r14; source-union-identity-proof.json records both file hashes and equality proof",
+    "unionMappedAreaM2": 10.616030049060692,
+    "lostSourceAreaM2": 9.341604216015714e-09,
+    "gainedSourceAreaM2": 3.7152744497976173e-10,
+    "duplicateSourceAreaM2": 5.832316691718659e-11,
+    "evidence": "r14-vs-r4-exact-all-source/exact-source-union.json",
+    "positiveDifferenceCutoff": 0,
+    "geosCaveat": "Floating-point GEOS overlay falsely reported a 0.030677213 mm2 loss and similar duplication on node175 face35946. Independent f32-normalized rational integration instead proves loss 3.911795498805269e-14 m2 and duplicate exactly zero on that face; exact-source-union evidence is authoritative."
+  },
+  "precision": {
+    "worldZeroDefinition": "Promote stored f32 world endpoints to f64; reject only a cross product exactly equal to zero, not a positive area below an arbitrary cutoff.",
+    "repairWorldZeroPieces": 161,
+    "repairWorldZeroSourceAreaM2": 1.6859492277608585e-09,
+    "consolidationWorldZeroPieces": 5141,
+    "consolidationWorldZeroSourceAreaM2": 6.34532234370406e-09,
+    "splitWorldZeroPieces": 3072,
+    "splitWorldZeroSourceAreaM2": 2.8381722236854096e-09,
+    "netDifferenceIsNotWorldZeroSum": "Per-piece discarded source areas overlap prior retained coverage, and f32 barycentric encoding moves boundaries. Their sum is not the map union loss. All positive union losses and gains are reported separately.",
+    "stageSourceDifferences": [
+      {
+        "stage": "repair-r7 to consolidated",
+        "sourceFacesAudited": 94507,
+        "lostSourceAreaM2": 6.5007631293349855e-09,
+        "gainedSourceAreaM2": 1.5715988116987054e-10,
+        "afterDuplicateAreaM2": 8.34699229332414e-11
+      },
+      {
+        "stage": "consolidated to split-r9",
+        "sourceFacesAudited": 94507,
+        "lostSourceAreaM2": 2.852309428459591e-09,
+        "gainedSourceAreaM2": 2.085588808570157e-11,
+        "afterDuplicateAreaM2": 5.832316691718659e-11
+      }
+    ],
+    "sourceEncodingQuantization": "Across 1069 source faces, positive directed loss exceeds that face's summed world-zero areas by a total 1.7756456010514587e-10 m2; this comparison is diagnostic, not an exact disjoint attribution. Maximum positive excess on trunk face1871 is 4.025804860137595e-12 m2. These positive encoding changes are disclosed separately from world-zero rejection. Disposition: documented for this revision as f32 source-boundary precision; no mathematical zero-loss claim. No original-triangle backstop is added and mathematical zero loss is not claimed.",
+    "exactSourceZeroRemovedAtConsolidation": 75,
+    "exactSourceZeroRemovedAtRepack": 143,
+    "exactSourceZeroRemovedAreaM2": 0,
+    "repackRetainedGeometryAndIdentitiesUnchanged": true,
+    "microCharts": 2957,
+    "microChartTrueSourceAreaM2": 9.847532253877266e-08,
+    "locatorMinimumHeightMm": 1e-05,
+    "locatorLengthExpansionCount": 78,
+    "locatorInterpretation": "UV microcharts provide a representable locator, including an explicit minimum height and offset-dependent minimum length. The true source/world metric controls physical decal dimensions. Locator dimensions are not physical geometry.",
+    "precisionDisposition": "documented-positive-f32-source-boundary-differences-no-mathematical-zero-loss-claim"
+  },
+  "sourceHinges": {
+    "count": 49,
+    "classifications": {
+      "shared-original-index-edge": 46,
+      "exact-POSITION-edge-across-duplicate-indices": 3
+    },
+    "supportDistanceMm": 0.001,
+    "supportIntervalsRounded": "inwards to f32",
+    "method": "Exact GLB source identity and normalized stored-f32 source-domain Fractions, clipped to the original source simplex, original edge parameter [0,1], and a strictly inward <=1 micrometre band. The physical band limit is proved against exact rational squared distance. Only exact-positive strip areas contribute; every positive common projected interval is retained and rounded inwards to f32, otherwise generation fails. Runtime clips projected output to existing masks. The band does not fill a geometric or paint-mask gap.",
+    "geometryAndOriginalSeamsUnchanged": true,
+    "report": "source-hinge-report.json",
+    "evidenceManifest": "reviewed-source-hinges-r17.json"
+  },
+  "semanticLimits": {
+    "activeGeometryBridges": 0,
+    "sourceFace2351": "Two disjoint trunk masks separated by a true 10.60484 mm gap remain disjoint; projection clips to existing triangles and creates no gap coverage.",
+    "sourceFace32590": "Source node175 face32590 belongs to front-left-fender near the left mirror root. Two historical rear-bumper ghosts total 5.288732 mm2 and must not be restored. The highlight image is location evidence behind the mirror, not direct exterior visibility proof.",
+    "excludedGroups": [
+      "hood and trunk inner panels and assembly lips",
+      "hood outer rear-corner returns",
+      "door folds, handle recess interiors and lower sidewalls",
+      "cowl below windscreen",
+      "rear light and trunk trim seams",
+      "sill and door-frame assembly returns",
+      "charge-cover narrow internal lip",
+      "eight individually reviewed UV0-degenerate seam and return-lip source faces"
+    ],
+    "visibilityAreaLimit": "A ray witness does not establish that the whole containing polygon is exposed or paintable. Native paint-switch material does not by itself approve an exterior paint mask.",
+    "completenessClaim": "Reviewed body domains only; no claim of 100 percent whole-car exterior completeness.",
+    "degenerateUV0Review": "Eight assembled-ray-visible seam/return-lip source faces were individually reviewed and excluded from this revision ordinary exterior painting domain. They are not described as hidden or left awaiting UV re-unwrap; no ordinary broad-panel omission was confirmed by these images."
+  },
+  "runtimeValidation": {
+    "status": "passed-with-explicit-sampling-and-source-precision-limits",
+    "paintFingerprint": "fc2d6130e310a026a57dc0d56f679e465b6a27773a7397168b142d2ce0e1aa60",
+    "positiveDomains": {
+      "counts": {
+        "sourcePositive": 118461,
+        "worldPositive": 118461,
+        "uvPositive": 118461,
+        "uvPublicBarycentricUsable": 118461
+      },
+      "minimum": {
+        "sourceRatio": 6.786404751617947e-23,
+        "worldDoubleAreaSquaredM4": 3.1554436208840472e-30,
+        "uvDoubleAreaAbs": 1.862645149230957e-09
+      },
+      "evidence": {
+        "path": "next/.reports/positive-domain-audit-packed-hinges-r17-independent.json",
+        "bytes": 1201,
+        "sha256": "3ff88eaad93928cf0562d4c2ebc6b6d14108b9f5c5e619e64ced596df5ca92f9"
+      }
+    },
+    "publicPhysicalFrames": {
+      "summary": {
+        "counts": {
+          "finiteFramesReturned": 118461,
+          "framesWithIndependentlyVerifiedStableSourcePlane": 118460,
+          "requestedFrames": 118461,
+          "requestedMicroChartFragments": 2957,
+          "requestedRawWorldAltitudeBelow2Micrometres": 5179
+        },
+        "elapsedSeconds": 31.614943,
+        "failedFrames": 0,
+        "identityMismatches": 236,
+        "maxAxisUnitError": 5.861344831714632e-08,
+        "maxNormalOneMinusAbsDot": 4.265120590041249e-09,
+        "maxOriginVsLocatedRawWorldErrorMm": 0.0007156493524841581,
+        "maxOrthogonalDot": 7.220251030393143e-08,
+        "uniqueRequestedMicroCharts": 2957,
+        "unverifiedSourcePlaneFrames": 1
+      },
+      "combinedWithOriginalGlbSupplement": {
+        "allRequestedFramesSourceNormalVerified": true,
+        "framesWithIndependentlyVerifiedSourcePlane": 118461,
+        "maxNormalOneMinusAbsDot": 4.265120590041249e-09,
+        "priorFailedFrames": 0,
+        "priorStableTemplateVerifiedFrames": 118460,
+        "remainingUnverifiedSourcePlaneFrames": 0,
+        "requestedFrames": 118461,
+        "supplementFailedFrames": 0,
+        "supplementOriginalGlbVerifiedFrames": 1
+      },
+      "absoluteNormalDotInterpretation": "Plane-normal comparison permits reversed UV orientation; no all-signed-normal-equivalence claim.",
+      "evidence": [
+        {
+          "path": "next/.reports/all-public-physical-frames-packed-hinges-r17-final.json",
+          "bytes": 118001,
+          "sha256": "26953497afd13fb8ffbca28f5bcef598f69d88d749268823b13d2af940359cad"
+        },
+        {
+          "path": "next/.reports/original-face16646-public-frame-r17.json",
+          "bytes": 5791,
+          "sha256": "98464c920c783b2580f44fc01dc723e535ce79f72c42ac9ac2a29ce15d359ab1"
+        }
+      ]
+    },
+    "authoredSeams": {
+      "seams": 730,
+      "partPairs": 24,
+      "actualQueries": 5268,
+      "failures": {
+        "crossingFailures": 0,
+        "sourceChanges": 0,
+        "nonFinite": 0,
+        "metricP95Above1Percent": 0,
+        "smallOppositeSideJumps": 0,
+        "exteriorDirectionDifferingHandedness": 0,
+        "exteriorDirectionUnusable": 0
+      },
+      "sampling": "every seam: 0.2/0.5/0.8 edge position, 10% inside source triangle, both directions; 7 spatial strata/pair add wide+tall rotations and 700mm square",
+      "metricDefinition": "singular values of generated image_uv*sizeMm differentiated against intrinsic physical world millimetres; expected [1,1]. Thin clipped output fragments excluded from numerical derivative only; coverage areas retain them.",
+      "evidence": {
+        "path": "next/.reports/seam-metric-audit-packed-hinges-r17-final.json",
+        "bytes": 18233419,
+        "sha256": "5160576bc6702643afcaecd7db123d5e50f641d3376e2f5d9c81abddb6706b0e"
+      }
+    },
+    "originalSourceHinges": {
+      "summary": {
+        "hinges": 49,
+        "metricOrDirectionFailures": 0,
+        "queries": 98,
+        "sourceLocateMismatch": 0,
+        "targetMissing": 0,
+        "unusable": 0
+      },
+      "scope": "Every authored source hinge, both directions, 300mm square anchored on largest raw-world same-source-face/part fragment. Differentiate emitted imageUv*300mm against raw world millimetres; compare with public source tangent axes rotated independently around the original shared GLB line. Original interiors come from stable raw world/source-barycentric affine inverse, not production private frames. Hinge support remains the production gate; missing and numerically unusable witnesses remain explicit.",
+      "evidence": {
+        "path": "next/.reports/source-hinge-runtime-axes-packed-hinges-r17-final.json",
+        "bytes": 111528,
+        "sha256": "da031d1773dc31e3c937392d4c273626f341374022415b964b424401c436b9ff"
+      }
+    },
+    "multiFragmentSourceFaces": {
+      "queriedSourceFaces": 2130,
+      "eligibleTargets": 19427,
+      "missingTargets": 0,
+      "skippedNoStableSeedGroups": 109,
+      "scope": "Every multi-fragment (part,sourceMesh,primitive,sourceFace) with largest stored f64-world-area seed >1mm2. Public centroid locate and 300x300mm same-part coverage. Expected targets have stored-world area >0.01mm2 and centroid distance <100mm. These thresholds select substantial witnesses; they do not discard smaller source domains from geometry. Missing target lists retain chart, own-centroid lookup, distance and normal evidence.",
+      "evidence": {
+        "path": "next/.reports/source-face-runtime-coverage-packed-hinges-r17-final-all.json",
+        "bytes": 1583166,
+        "sha256": "7120802ec750291c9cc41897951a210212ae3d8e26a23f11cea3d406f28d5cdf"
+      }
+    },
+    "historicalTjunctionReplays": [
+      {
+        "mode": "mathematical-source-centroid",
+        "oldMap": "r10",
+        "summary": {
+          "changedSourceDomains": 31,
+          "changedSourceFragmentIds": 98,
+          "changedTargetDomains": 31,
+          "changedTargetFragmentIds": 98,
+          "executedPublicCoverageQueries": 98,
+          "fallbackQueries": 0,
+          "oldPublicSourceLocateDifferentNamedFragment": 0,
+          "oldPublicSourceLocateDifferentOriginalSourceOrPart": 0,
+          "oldPublicTargetLocateDifferentNamedFragment": 0,
+          "oldPublicTargetLocateDifferentOriginalSourceOrPart": 0,
+          "oldTargetMissing": 98,
+          "publicSourceLocateDifferentFragment": 1,
+          "publicSourceLocateDifferentOriginalSourceOrPart": 0,
+          "queries": 98,
+          "sourceFallbacks": 0,
+          "strictSourceDomainQueries": 98,
+          "strictSourceDomainTargetMissing": 0,
+          "targetFallbacks": 0,
+          "targetHistoricalPointNotCovered": 0,
+          "targetMissing": 0,
+          "unmappedQueries": 0
+        },
+        "evidence": {
+          "path": "next/.reports/historical-t-coverage-r10-to-r17-final.json",
+          "bytes": 957556,
+          "sha256": "d04809d922ee2e79f6e8d35c7be93a60c60f5605abf3ca38109a1bf752325582"
+        }
+      },
+      {
+        "mode": "mathematical-source-centroid",
+        "oldMap": "r14",
+        "summary": {
+          "changedSourceDomains": 0,
+          "changedSourceFragmentIds": 0,
+          "changedTargetDomains": 0,
+          "changedTargetFragmentIds": 0,
+          "executedPublicCoverageQueries": 38,
+          "fallbackQueries": 0,
+          "oldPublicSourceLocateDifferentNamedFragment": 2,
+          "oldPublicSourceLocateDifferentOriginalSourceOrPart": 2,
+          "oldPublicTargetLocateDifferentNamedFragment": 2,
+          "oldPublicTargetLocateDifferentOriginalSourceOrPart": 2,
+          "oldTargetMissing": 32,
+          "publicSourceLocateDifferentFragment": 2,
+          "publicSourceLocateDifferentOriginalSourceOrPart": 2,
+          "queries": 38,
+          "sourceFallbacks": 0,
+          "strictSourceDomainQueries": 38,
+          "strictSourceDomainTargetMissing": 0,
+          "targetFallbacks": 0,
+          "targetHistoricalPointNotCovered": 0,
+          "targetMissing": 0,
+          "unmappedQueries": 0
+        },
+        "evidence": {
+          "path": "next/.reports/historical-t-coverage-r14-to-r17-final.json",
+          "bytes": 374688,
+          "sha256": "ed5e0a23204bc8a2359c62d2fa38c7bf612cedd003376078872bcee078e56dd2"
+        }
+      },
+      {
+        "mode": "historical-rounded-public-UV",
+        "oldMap": "r10",
+        "summary": {
+          "changedSourceDomains": 31,
+          "changedSourceFragmentIds": 98,
+          "changedTargetDomains": 31,
+          "changedTargetFragmentIds": 98,
+          "executedPublicCoverageQueries": 98,
+          "fallbackQueries": 0,
+          "oldPublicSourceLocateDifferentNamedFragment": 0,
+          "oldPublicSourceLocateDifferentOriginalSourceOrPart": 0,
+          "oldPublicTargetLocateDifferentNamedFragment": 0,
+          "oldPublicTargetLocateDifferentOriginalSourceOrPart": 0,
+          "oldTargetMissing": 98,
+          "publicSourceLocateDifferentFragment": 0,
+          "publicSourceLocateDifferentOriginalSourceOrPart": 0,
+          "queries": 98,
+          "sourceFallbacks": 0,
+          "strictSourceDomainQueries": 98,
+          "strictSourceDomainTargetMissing": 0,
+          "targetFallbacks": 0,
+          "targetHistoricalPointNotCovered": 0,
+          "targetMissing": 0,
+          "unmappedQueries": 0
+        },
+        "evidence": {
+          "path": "next/.reports/historical-t-coverage-public-rounded-r10-to-r17-final.json",
+          "bytes": 969207,
+          "sha256": "bcc72827c04d65a6db88e03aca32d7c49f1f034e21fe1ae4860409b04a73f133"
+        }
+      },
+      {
+        "mode": "historical-rounded-public-UV",
+        "oldMap": "r14",
+        "summary": {
+          "changedSourceDomains": 0,
+          "changedSourceFragmentIds": 0,
+          "changedTargetDomains": 0,
+          "changedTargetFragmentIds": 0,
+          "executedPublicCoverageQueries": 38,
+          "fallbackQueries": 0,
+          "oldPublicSourceLocateDifferentNamedFragment": 2,
+          "oldPublicSourceLocateDifferentOriginalSourceOrPart": 2,
+          "oldPublicTargetLocateDifferentNamedFragment": 2,
+          "oldPublicTargetLocateDifferentOriginalSourceOrPart": 2,
+          "oldTargetMissing": 32,
+          "publicSourceLocateDifferentFragment": 2,
+          "publicSourceLocateDifferentOriginalSourceOrPart": 2,
+          "queries": 38,
+          "sourceFallbacks": 0,
+          "strictSourceDomainQueries": 38,
+          "strictSourceDomainTargetMissing": 0,
+          "targetFallbacks": 0,
+          "targetHistoricalPointNotCovered": 0,
+          "targetMissing": 0,
+          "unmappedQueries": 0
+        },
+        "evidence": {
+          "path": "next/.reports/historical-t-coverage-public-rounded-r14-to-r17-final.json",
+          "bytes": 379251,
+          "sha256": "7a5af72fa9669d3f63b8e27b3f66564e8952edee5b1e77ffe2c4397c49a76a0d"
+        }
+      }
+    ],
+    "mappingTransitions": [
+      {
+        "from": "v24",
+        "to": "v25",
+        "sampledParts": 18,
+        "samplesPerFragment": 4,
+        "rotationRadians": 0.47,
+        "acceptedSamples": 415693,
+        "safelyRejectedSamples": 5139,
+        "maxAcceptedWorldErrorMm": 0.007007285952568054,
+        "maxAcceptedImageVerticalAxisAngleErrorDeg": 0.7875860333442688,
+        "scope": "four barycentric samples per old fragment at fixed rotation 0.47 rad; image vertical axis only; v21 has 17 parts without trunk; rejected migration leaves the complete project and undo/redo unchanged",
+        "evidence": {
+          "path": "next/.reports/mapping-transition-v24-v25-r17.json",
+          "bytes": 81252,
+          "sha256": "924933af64e5277986e2880d4e552a45a489b32281455845c5e24054c1ae4383"
+        }
+      },
+      {
+        "from": "v21",
+        "to": "v25",
+        "sampledParts": 17,
+        "samplesPerFragment": 4,
+        "rotationRadians": 0.47,
+        "acceptedSamples": 373034,
+        "safelyRejectedSamples": 390,
+        "maxAcceptedWorldErrorMm": 0.0005057621747255325,
+        "maxAcceptedImageVerticalAxisAngleErrorDeg": 0.7875860333442688,
+        "scope": "four barycentric samples per old fragment at fixed rotation 0.47 rad; image vertical axis only; v21 has 17 parts without trunk; rejected migration leaves the complete project and undo/redo unchanged",
+        "evidence": {
+          "path": "next/.reports/mapping-transition-v21-v25-r17.json",
+          "bytes": 80990,
+          "sha256": "abb46038092e9cf96e2a17e6f6eeee2e6a77ba44d2f8c67b26b98f9d7ab5a012"
+        }
+      }
+    ],
+    "desktop": {
+      "passed": true,
+      "checks": 35,
+      "scope": "Real desktop IPC, native HWND visibility/sibling hit-tests and GPU submissions; GPU PNGs are readbacks, not OS composition screenshots",
+      "evidence": {
+        "path": "next/.reports/smoke-1794941809803/result.json",
+        "bytes": 3755,
+        "sha256": "c0549c3f3de723b51bdd63a7b5dd6f6d93b471c41ac99ea5318dc660d3363198"
+      }
+    },
+    "wholeCarNativeGpu": {
+      "passed": true,
+      "runtimeMasks": 18,
+      "maskTriangles": 118461,
+      "maskEncoding": "little-endian f64 normalized x/y; 6 values / 48 bytes per triangle",
+      "maskNonfinite": 0,
+      "maskNonpositiveArea": 0,
+      "partPairs": 24,
+      "directions": 48,
+      "sourceUnchangedAllCases": true,
+      "invalidCoverageFragments": 0,
+      "nativeImageWitnesses": 96,
+      "minimumMatchedProbePixelsPerWitness": 9,
+      "scope": "Real PNG import and uploaded image bytes, per-side viewport_probe image-UV to GPU color matches, latest submitted document/selection/focus frames. At least three matching probe pixels per side; not three distinct colors. Alternating reflection and rotations +31/-23 degrees at 540x360mm. GPU readbacks, not OS composition screenshots. Representative seeds do not prove every possible decal placement.",
+      "evidence": {
+        "path": "next/.reports/whole-car-seams-1794941983379/result.json",
+        "bytes": 2863195,
+        "sha256": "ed37832e9adb607968c4a32f479f962acadd26cda78724bd412f9226a376c0bf"
+      }
+    },
+    "cameraFocus": {
+      "slopingFrontRearSideAzimuthPreserved": true,
+      "verticalFallbackTested": true,
+      "cameraEyeRegressions": 3,
+      "rearBumperToRearCRingIncludedInFinal48": true
+    },
+    "renderSubmissionBarrier": "renderedRevision and camera status advance only when gpu.frames actually increases; recoverable skipped frames remain dirty for retry.",
+    "checks": [
+      {
+        "command": "pnpm build",
+        "passed": true
+      },
+      {
+        "command": "pnpm check:boundary",
+        "passed": true
+      },
+      {
+        "command": "pnpm test:transforms",
+        "passed": true,
+        "cases": 768
+      },
+      {
+        "command": "pnpm test:editor-properties",
+        "passed": true,
+        "cases": 4096
+      },
+      {
+        "command": "pnpm test:whole-layout",
+        "passed": true,
+        "cases": 20
+      },
+      {
+        "command": "node tools/tests/test-whole-car-audit-evidence.mjs",
+        "passed": true,
+        "rejectedBadEvidenceCases": 18
+      },
+      {
+        "command": "cargo fmt --all --check",
+        "passed": true
+      },
+      {
+        "command": "cargo test --workspace --exclude itasha-desktop --locked",
+        "passed": true,
+        "unitTests": 81,
+        "surfaceMapIntegrationTests": 30,
+        "scope": "final map and camera; then new f64-mask regression independently checked in full 28-test renderer suite"
+      },
+      {
+        "command": "cargo test -p itasha-renderer --lib --locked",
+        "passed": true,
+        "unitTests": 28,
+        "realFormerlyCollapsedTrunkFragments": 8
+      },
+      {
+        "command": "cargo run -p itasha-renderer --example verify_paint_package -- L:/SU7/3D/Blender/software assets/paint/su7-v25-verified/paint-map.json",
+        "passed": true,
+        "surfaces": 18
+      },
+      {
+        "command": "cargo build -p itasha-desktop --features custom-protocol --locked",
+        "passed": true
+      },
+      {
+        "command": "cargo build -p itasha-desktop --release --features custom-protocol --locked",
+        "passed": true,
+        "scope": "Final release binary is a local build artifact; binary hash is recorded separately to avoid a report/embedded-manifest hash cycle."
+      }
+    ]
+  },
+  "reproduction": {
+    "prerequisites": "Commands run from repository root, except cargo commands explicitly run from next/. Python requires numpy and shapely. All output directories must be fresh because tools refuse overwrite. The local reviewed geometry, visibility, r4 repair and hinge manifest under next/.reports are required inputs and are not committed to GitHub. A clean clone cannot regenerate raw OEM resources or these reviewed inputs from this summary alone.",
+    "commands": [
+      "python next/tools/assets/repair-reviewed-paint-gaps.py --model 'L:/SU7/3D/Blender/software/body.glb' --map next/assets/paint/su7-v24-mirrored/paint-map.json --reviewed next/assets/paint/su7-v23-restored/paint-map.json --prior-repair next/.reports/paint-integrity-v24-20261117/v25-candidate-r4/paint-map.json --selection-basis reviewed-r4-selection --audit next/.reports/paint-integrity-v24-20261117/geometry --component-visibility next/.reports/paint-integrity-v24-20261117/full-component-visibility/visibility.json --output next/.reports/paint-integrity-v24-20261117/v25-candidate-r7",
+      "python next/tools/assets/conform-paint-fragments.py --model 'L:/SU7/3D/Blender/software/body.glb' --map next/.reports/paint-integrity-v24-20261117/v25-candidate-r7/paint-map-unsealed.json --output next/.reports/paint-integrity-v24-20261117/v25-conforming-strict-r9",
+      "python next/tools/assets/conform-paint-fragments.py --repack-only --model 'L:/SU7/3D/Blender/software/body.glb' --map next/.reports/paint-integrity-v24-20261117/v25-conforming-strict-r9/paint-map-unsealed.json --output next/.reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-r13",
+      "[cwd next] cargo run -p itasha-surface-map --example seal_map -- .reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-r13/paint-map-unsealed.json .reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-r13/paint-map.json",
+      "python next/tools/assets/connect-reviewed-source-hinges.py --model 'L:/SU7/3D/Blender/software/body.glb' --map next/.reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-r13/paint-map.json --reviewed-pairs next/.reports/paint-integrity-v24-20261117/reviewed-source-hinges-r17.json --output next/.reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-hinges-r17",
+      "[cwd next] cargo run -p itasha-surface-map --example seal_map -- .reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-hinges-r17/paint-map-unsealed.json .reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-hinges-r17/paint-map.json",
+      "python next/tools/assets/audit-source-union-exact.py --model 'L:/SU7/3D/Blender/software/body.glb' --before next/.reports/paint-integrity-v24-20261117/v25-candidate-r4/paint-map.json --after next/.reports/paint-integrity-v24-20261117/v25-conforming-strict-packed-hinges-r17/paint-map.json --output next/.reports/paint-integrity-v24-20261117/fresh-r17-exact-audit"
+    ],
+    "evidenceRetainedLocally": "next/.reports/paint-integrity-v24-20261117",
+    "toolValidation": "Seven asset scripts passed py_compile and git diff --check. Exact rational area code passed analytic identical, crossed, contained and duplicate triangle cases."
+  },
+  "independentOriginalEdgeClosure": {
+    "status": "passed",
+    "report": "next\\.reports\\all-original-cross-component-edge-strip-audit-r17.json",
+    "sha256": "ee2783006631addf56a954ba423e5d5b423c4d7303fdc72b2bb9be40f1f7eec9",
+    "paintFingerprint": "fc2d6130e310a026a57dc0d56f679e465b6a27773a7397168b142d2ce0e1aa60",
+    "triangles": 118461,
+    "sourcePartGroups": 94516,
+    "independentSourcePlaneGroupComponents": 62,
+    "acceptedCrossSourceSpatialEdges": 139818,
+    "samePartPropagationConnections": 49,
+    "allSamePartOriginalSharedEdgeRelations": 138918,
+    "alreadyConnectedOriginalRelations": 138900,
+    "crossComponentOriginalEdgeCandidates": 18,
+    "positiveCommon1MicrometreSupportRelations": 0,
+    "positiveCommonSupportComponentPairs": 0,
+    "crossComponentCandidatesWithoutPositiveCommonSupport": 18,
+    "positiveSupportRelationsWithOpposingOriginalInteriors": 0,
+    "positiveSupportRelationsWithOriginalEdgeValence2": 0,
+    "positiveSupportRelationsWithSharedOriginalIndexEdge": 0,
+    "elapsedSeconds": 4.862096309661865
+  }
+}

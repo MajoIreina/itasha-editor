@@ -49,6 +49,8 @@ pub struct Status {
     pub upload_cpu_ms: f64,
     pub ready_ms: f64,
     pub frames: u64,
+    /// Document revision actually submitted by the native renderer.
+    pub rendered_revision: String,
     pub render_width: u32,
     pub render_height: u32,
     pub target_fps: u16,
@@ -163,7 +165,7 @@ struct SurfaceCache {
     fingerprint: String,
     epoch: String,
     generation: u64,
-    masks: std::collections::HashMap<String, Vec<f32>>,
+    masks: std::collections::HashMap<String, Vec<f64>>,
 }
 struct DecalUpdate {
     reply: std::sync::mpsc::SyncSender<bool>,
@@ -861,14 +863,21 @@ impl Host {
                     return false;
                 };
                 let next = if let (Some(handle), Some(frame)) = (g.handle, g.control_frame) {
-                    Some(itasha_renderer::interaction::transform_screen_control(
-                        &g.layer,
-                        frame,
-                        g.start_screen.into(),
-                        [input.x, input.y].into(),
-                        handle,
-                        input.shift,
-                    ))
+                    let cache = self.surfaces.lock().ok();
+                    cache
+                        .as_ref()
+                        .and_then(|cache| cache.topology.as_ref())
+                        .and_then(|topology| {
+                            itasha_renderer::interaction::transform_surface_control(
+                                topology,
+                                &g.layer,
+                                frame,
+                                g.start_screen.into(),
+                                [input.x, input.y].into(),
+                                handle,
+                                input.shift,
+                            )
+                        })
                 } else {
                     gpu.edit_point(&g.layer, input.x, input.y, false)
                         .and_then(|current| {
@@ -1099,6 +1108,7 @@ impl ApplicationHandler<Message> for Host {
             }
             Message::Select { epoch, id } => {
                 if epoch == self.edit_epoch
+                    && id != self.selected
                     && id
                         .as_ref()
                         .is_none_or(|id| self.edit_layers.iter().any(|l| l.id.to_string() == *id))
@@ -1564,19 +1574,32 @@ impl ApplicationHandler<Message> for Host {
             }
             WindowEvent::RedrawRequested if self.bounds.visible => {
                 let frame_started = Instant::now();
-                if let Some(gpu) = &mut self.gpu
-                    && let Err(error) = gpu.render(self.bounds.light)
-                {
-                    self.fail(error);
+                let submitted = if let Some(gpu) = &mut self.gpu {
+                    let previous_frames = gpu.frames;
+                    if let Err(error) = gpu.render(self.bounds.light) {
+                        self.fail(error);
+                        return;
+                    }
+                    gpu.frames > previous_frames
+                } else {
+                    false
+                };
+                self.dirty = self
+                    .gpu
+                    .as_ref()
+                    .is_some_and(|gpu| !submitted || gpu.temporal_pending());
+                self.last_frame = frame_started;
+                // Recoverable swapchain errors can skip submission. Retry them
+                // without publishing a document revision or camera as rendered.
+                if !submitted {
                     return;
                 }
-                self.dirty = self.gpu.as_ref().is_some_and(|gpu| gpu.temporal_pending());
-                self.last_frame = frame_started;
                 let first_frame = self.status.lock().map(|s| s.frames == 0).unwrap_or(false);
                 let mut settings_changed = false;
                 if let (Some(gpu), Ok(mut status)) = (&self.gpu, self.status.lock()) {
                     settings_changed = status.antialiasing != self.performance.antialiasing;
                     status.frames = gpu.frames;
+                    status.rendered_revision = self.edit_revision.to_string();
                     (status.render_width, status.render_height) = gpu.render_size();
                     status.target_fps = self.performance.target_fps;
                     status.antialiasing = self.performance.antialiasing.clone();

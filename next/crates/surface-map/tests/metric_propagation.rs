@@ -1,5 +1,6 @@
 //! Geometric oracles for propagation: the expected image coordinates come from
-//! the known flat or bent sheet, independently of the triangle traversal.
+//! the known flat or bent sheet in physical millimetres, independently of
+//! triangle traversal or the scale/shear of the packed display charts.
 use glam::{Mat2, Vec2, Vec3};
 use itasha_surface_map::{
     CoverageFragment, CoverageRect, EdgeConnection, EdgeRef, PaintTriangle, TriangleId,
@@ -64,6 +65,7 @@ fn join(left: &[PaintTriangle], right: &[PaintTriangle], gap: f32) -> EdgeConnec
         reversed: true,
         physical_gap_mm: gap,
         propagation: true,
+        source_hinge: None,
     }
 }
 
@@ -96,6 +98,8 @@ fn assert_matches_sheet(
     triangles: &[PaintTriangle],
     fragments: &[CoverageFragment],
     rect: CoverageRect,
+    physical_center: Vec2,
+    chart: impl Fn(Vec2) -> Vec2,
     domain: impl Fn([f32; 3]) -> Vec2,
 ) {
     let originals = triangles
@@ -103,6 +107,23 @@ fn assert_matches_sheet(
         .map(|t| (&t.id, t))
         .collect::<BTreeMap<_, _>>();
     let rotation = Mat2::from_angle(-rect.rotation_rad);
+    // Independent polar oracle via the positive square root of A^T A. The
+    // fixture supplies exact flat-sheet positions; chart stretch/shear never
+    // changes image dimensions. This differs from the production closed form.
+    let offset = chart(Vec2::ZERO);
+    let packing = Mat2::from_cols(
+        (chart(Vec2::X * 1000.) - offset) / 1000.,
+        (chart(Vec2::Y * 1000.) - offset) / 1000.,
+    );
+    let gram = packing.transpose() * packing;
+    let root_det = gram.determinant().sqrt();
+    let positive_root = (gram + Mat2::IDENTITY * root_det)
+        * (gram.x_axis.x + gram.y_axis.y + 2. * root_det)
+            .sqrt()
+            .recip();
+    let orientation = packing * positive_root.inverse();
+    assert!((chart(physical_center) - rect.center).length() < 0.01);
+    let image_domain = |w| rect.center + orientation * (domain(w) - physical_center);
     for fragment in fragments {
         let original = originals[&fragment.triangle];
         for ((world, image), paint) in fragment
@@ -111,7 +132,8 @@ fn assert_matches_sheet(
             .zip(&fragment.image_uv)
             .zip(&fragment.paint_uv)
         {
-            let expected = rotation * (domain(*world) - rect.center) / rect.size + Vec2::splat(0.5);
+            let expected =
+                rotation * (image_domain(*world) - rect.center) / rect.size + Vec2::splat(0.5);
             assert!(
                 expected.distance(Vec2::from_array(*image)) < 0.0001,
                 "{}: image restarts, changes scale or folds; world={world:?}, expected={expected:?}, actual={image:?}",
@@ -129,6 +151,32 @@ fn assert_matches_sheet(
                 "propagation must preserve the original display chart coordinates"
             );
         }
+        let w = fragment
+            .world
+            .iter()
+            .copied()
+            .map(Vec3::from_array)
+            .collect::<Vec<_>>();
+        let image = fragment
+            .image_uv
+            .iter()
+            .copied()
+            .map(Vec2::from_array)
+            .collect::<Vec<_>>();
+        let physical = [(w[1] - w[0]) * 1000., (w[2] - w[0]) * 1000.];
+        let pixels = [
+            (image[1] - image[0]) * rect.size,
+            (image[2] - image[0]) * rect.size,
+        ];
+        for (a, b) in [(0, 0), (1, 1), (0, 1)] {
+            let expected = physical[a].dot(physical[b]);
+            assert!(
+                (expected - pixels[a].dot(pixels[b])).abs()
+                    < (physical[a].length() * physical[b].length()).max(1.) * 0.0002,
+                "{}: generated image UV must have an identity physical metric",
+                fragment.part_id
+            );
+        }
     }
     // The oracle knows the entire sheet's flat coordinates, so it needs no
     // graph search. Comparing area also catches omitted or duplicated coverage.
@@ -136,7 +184,7 @@ fn assert_matches_sheet(
         .iter()
         .cloned()
         .map(|mut t| {
-            t.paint_uv = t.world.map(|p| domain(p).to_array());
+            t.paint_uv = t.world.map(|p| image_domain(p).to_array());
             t
         })
         .collect::<Vec<_>>();
@@ -170,9 +218,14 @@ fn anisotropic_seed_extends_consistently_across_an_unrelated_chart() {
     };
     let actual = topology.coverage("source", rect, true);
     assert!(actual.iter().any(|f| f.part_id == "neighbor"));
-    assert_matches_sheet(&triangles, &actual, rect, |w| {
-        seed_uv(Vec2::new(w[0], w[1]) * 1000.)
-    });
+    assert_matches_sheet(
+        &triangles,
+        &actual,
+        rect,
+        Vec2::new(800., 400.),
+        seed_uv,
+        |w| Vec2::new(w[0], w[1]) * 1000.,
+    );
     assert_eq!(topology.triangles, triangles);
 }
 
@@ -206,9 +259,14 @@ fn ninety_degree_bend_uses_surface_distance_and_keeps_the_real_gap() {
     };
     let actual = topology.coverage("source", rect, true);
     assert!(actual.iter().any(|f| f.part_id == "folded"));
-    assert_matches_sheet(&triangles, &actual, rect, |w| {
-        Vec2::new((w[0] + w[2]) * 1000., w[1] * 1000.)
-    });
+    assert_matches_sheet(
+        &triangles,
+        &actual,
+        rect,
+        Vec2::new(850., 450.),
+        |p| p,
+        |w| Vec2::new((w[0] + w[2]) * 1000., w[1] * 1000.),
+    );
 }
 
 #[test]
@@ -227,9 +285,14 @@ fn unequal_seam_edges_preserve_target_length_and_tangential_offset() {
     };
     let actual = topology.coverage("source", rect, true);
     assert!(actual.iter().any(|f| f.part_id == "neighbor"));
-    assert_matches_sheet(&triangles, &actual, rect, |w| {
-        seed_uv(Vec2::new(w[0], w[1]) * 1000.)
-    });
+    assert_matches_sheet(
+        &triangles,
+        &actual,
+        rect,
+        Vec2::new(850., 450.),
+        seed_uv,
+        |w| Vec2::new(w[0], w[1]) * 1000.,
+    );
 }
 
 #[test]
@@ -249,9 +312,14 @@ fn a_chain_of_neighbors_preserves_one_image_and_does_not_change_the_anchor() {
     };
     let actual = topology.coverage("source", rect, true);
     assert!(actual.iter().any(|f| f.part_id == "far"));
-    assert_matches_sheet(&triangles, &actual, rect, |w| {
-        seed_uv(Vec2::new(w[0], w[1]) * 1000.)
-    });
+    assert_matches_sheet(
+        &triangles,
+        &actual,
+        rect,
+        Vec2::new(850., 450.),
+        seed_uv,
+        |w| Vec2::new(w[0], w[1]) * 1000.,
+    );
     let source_only = topology.coverage("source", rect, false);
     assert!(!source_only.is_empty());
     assert!(source_only.iter().all(|f| f.part_id == "source"));
@@ -298,8 +366,8 @@ fn independent_seam_samples_keep_world_orientation_even_when_triangles_point_the
         };
         let actual = topology.coverage(part, rect, true);
         assert!(actual.iter().any(|f| f.part_id != part));
-        assert_matches_sheet(&triangles, &actual, rect, |w| {
-            chart(Vec2::new(w[0], w[1]) * 1000.)
+        assert_matches_sheet(&triangles, &actual, rect, center, chart, |w| {
+            Vec2::new(w[0], w[1]) * 1000.
         });
     }
 }
@@ -338,10 +406,65 @@ fn independently_reversed_mesh_winding_does_not_mirror_the_neighbor() {
                 rotation_rad: 0.23,
             };
             let actual = topology.coverage("source", rect, true);
-            assert_matches_sheet(&triangles, &actual, rect, |w| {
-                seed_uv(Vec2::new(w[0], w[1]) * 1000.)
-            });
+            assert_matches_sheet(
+                &triangles,
+                &actual,
+                rect,
+                Vec2::new(850., 450.),
+                seed_uv,
+                |w| Vec2::new(w[0], w[1]) * 1000.,
+            );
         }
+    }
+}
+
+#[test]
+fn non_square_rotated_artwork_keeps_physical_size_across_mirrored_scaled_charts() {
+    for mirror in [1., -1.] {
+        let source_packing = Mat2::from_cols(Vec2::new(mirror * 2., 0.3), Vec2::new(0.4, 0.65));
+        let target_packing =
+            Mat2::from_angle(0.9) * Mat2::from_cols(Vec2::new(-0.45, 0.2), Vec2::new(0.1, 2.8));
+        let source_chart = |p| source_packing * p + Vec2::new(100., 200.);
+        let target_chart = |p| target_packing * p + Vec2::new(6500., -4200.);
+        let source = flat_panel(0, "source", 0., 0., 1., source_chart);
+        let target = flat_panel(2, "target", 1.003, 0., 1., target_chart);
+        let connection = join(&source, &target, 3.);
+        let triangles = [source, target].concat();
+        let topology = Topology::new(triangles.clone(), &[connection]);
+        for (part, x) in [("source", 800.), ("target", 1200.)] {
+            for y in [200., 500., 800.] {
+                let physical_center = Vec2::new(x, y);
+                let chart: &dyn Fn(Vec2) -> Vec2 = if part == "source" {
+                    &source_chart
+                } else {
+                    &target_chart
+                };
+                for angle in [0., 0.47, -1.1] {
+                    let rect = CoverageRect {
+                        center: chart(physical_center),
+                        size: Vec2::new(1500., 800.),
+                        rotation_rad: angle,
+                    };
+                    let actual = topology.coverage(part, rect, true);
+                    assert!(
+                        actual.iter().any(|f| f.part_id != part),
+                        "a real 3mm seam must be crossed"
+                    );
+                    assert_matches_sheet(&triangles, &actual, rect, physical_center, chart, |w| {
+                        Vec2::new(w[0], w[1]) * 1000.
+                    });
+                    assert_eq!(
+                        actual
+                            .iter()
+                            .filter(|f| f.part_id == part)
+                            .cloned()
+                            .collect::<Vec<_>>(),
+                        topology.coverage(part, rect, false)
+                    );
+                }
+            }
+        }
+        assert_eq!(topology.triangles, triangles);
     }
 }
 
@@ -372,17 +495,24 @@ fn obtuse_body_fold_preserves_sheet_orientation_instead_of_projecting_a_mirror()
             rotation_rad: 0.13,
         };
         let actual = topology.coverage("source", rect, true);
-        assert_matches_sheet(&triangles, &actual, rect, |w| {
-            let p = Vec3::from_array(w);
-            Vec2::new(
-                if p.z > 1e-6 {
-                    1.003 + (p - hinge).dot(direction)
-                } else {
-                    p.x
-                },
-                p.y,
-            ) * 1000.
-        });
+        assert_matches_sheet(
+            &triangles,
+            &actual,
+            rect,
+            Vec2::new(850., 450.),
+            |p| p,
+            |w| {
+                let p = Vec3::from_array(w);
+                Vec2::new(
+                    if p.z > 1e-6 {
+                        1.003 + (p - hinge).dot(direction)
+                    } else {
+                        p.x
+                    },
+                    p.y,
+                ) * 1000.
+            },
+        );
     }
 }
 

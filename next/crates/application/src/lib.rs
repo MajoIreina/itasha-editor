@@ -79,6 +79,20 @@ pub struct Application {
 }
 
 impl Application {
+    pub fn remap_surface_mapping(
+        &mut self,
+        session: &SessionRef,
+        from: &str,
+        to: &str,
+        remap: impl FnMut(&mut Layer) -> AppResult<()>,
+    ) -> AppResult<bool> {
+        self.session_check(session, None)?;
+        self.session
+            .as_mut()
+            .expect("checked session")
+            .remap_surface_mapping(from, to, remap)
+    }
+
     pub fn rebind_surface_connections(
         &mut self,
         session: &SessionRef,

@@ -20,9 +20,17 @@ pub struct SurfaceGeometry {
     pub info: SurfaceInfo,
     pub mesh_id: String,
     pub projection: [[f32; 4]; 3],
-    /// Packed UV triangles, streamed once as binary to the 2D view.
-    pub mask: Vec<f32>,
+    /// Normalized UV triangles, streamed as little-endian f64 to the 2D view.
+    pub mask: Vec<f64>,
     pub editable_triangles: Vec<itasha_surface_map::PaintTriangle>,
+}
+
+pub(crate) fn normalize_mask_point(point: [f32; 2], origin: [f32; 2], size: [f32; 2]) -> [f64; 2] {
+    // Widen before either subtraction or division: rounding normalized values
+    // back to f32 can merge distinct stored UV corners of positive-area slivers.
+    std::array::from_fn(|axis| {
+        (f64::from(point[axis]) - f64::from(origin[axis])) / f64::from(size[axis])
+    })
 }
 #[derive(Clone, Copy)]
 struct OccluderTriangle {
@@ -615,10 +623,7 @@ pub fn prepare(scene: &mut Scene, plans: &[SurfacePlan]) -> Result<(), String> {
         }
         let mask = triangles
             .iter()
-            .flat_map(|t| {
-                t.iter()
-                    .flat_map(|p| [(p[0] - min[0]) / size[0], (p[1] - min[1]) / size[1]])
-            })
+            .flat_map(|t| t.iter().flat_map(|p| normalize_mask_point(*p, min, size)))
             .collect();
         for triangle in &mut editable_triangles {
             triangle.paint_uv = triangle
@@ -705,6 +710,89 @@ mod tests {
     use super::*;
     use crate::assets::{Material, MaterialUniform, Mesh, SceneStats, Vertex};
     use bytemuck::Zeroable;
+
+    #[test]
+    fn normalized_mask_preserves_all_eight_collapsing_trunk_fragments() {
+        // Actual stored f32 UVs from the reviewed r17 trunk, node91 source faces
+        // 1829, 1843 (twice), 1870 (twice), 1889, 2874 and 7254. All eight had
+        // positive raw area but became collinear after the old f32 division.
+        let bits: [[u32; 6]; 8] = [
+            [
+                0x4480caec, 0x4351d0f4, 0x44805ff4, 0x43526193, 0x448135e5, 0x43514054,
+            ],
+            [
+                0x44511319, 0x434601cc, 0x4450650b, 0x4347169a, 0x44514d1d, 0x4345a587,
+            ],
+            [
+                0x445064f7, 0x434716bc, 0x44501f5f, 0x43478569, 0x445064f6, 0x434716bc,
+            ],
+            [
+                0x43d9c8e0, 0x4346c861, 0x43db91eb, 0x43483652, 0x43db91ea, 0x43483652,
+            ],
+            [
+                0x43dd5af4, 0x4349a443, 0x43dd5af3, 0x4349a443, 0x43db91ea, 0x43483652,
+            ],
+            [
+                0x4348fd4f, 0x4361fca8, 0x43472ddc, 0x43616f3f, 0x4348fd50, 0x4361fca8,
+            ],
+            [
+                0x4373ba65, 0x442f247d, 0x4373ba64, 0x442f247d, 0x43742d75, 0x442e64b9,
+            ],
+            [
+                0x441f9671, 0x44982e43, 0x44201347, 0x44983acd, 0x441f199b, 0x449821ba,
+            ],
+        ];
+        let size = [f32::from_bits(0x44bb1945), f32::from_bits(0x449c257f)];
+        let area = |p: [[f64; 2]; 3]| {
+            (p[1][0] - p[0][0]) * (p[2][1] - p[0][1]) - (p[1][1] - p[0][1]) * (p[2][0] - p[0][0])
+        };
+        for (index, values) in bits.into_iter().enumerate() {
+            let uv: [[f32; 2]; 3] = std::array::from_fn(|corner| {
+                [
+                    f32::from_bits(values[corner * 2]),
+                    f32::from_bits(values[corner * 2 + 1]),
+                ]
+            });
+            let raw = area(uv.map(|p| p.map(f64::from)));
+            assert_ne!(
+                raw, 0.,
+                "fixture {index} must have positive absolute raw area"
+            );
+            let old = uv.map(|p| [f64::from(p[0] / size[0]), f64::from(p[1] / size[1])]);
+            assert_eq!(
+                area(old),
+                0.,
+                "fixture {index} must reproduce the old collapse"
+            );
+
+            let normalized = uv.map(|p| normalize_mask_point(p, [0.; 2], size));
+            assert_ne!(area(normalized), 0., "normalization lost fixture {index}");
+            assert_eq!(area(normalized).signum(), raw.signum());
+            let shifted = uv.map(|p| normalize_mask_point(p, uv[0], size));
+            assert_ne!(
+                area(shifted),
+                0.,
+                "legacy origin normalization lost fixture {index}"
+            );
+            assert_eq!(area(shifted).signum(), raw.signum());
+
+            // The viewport's binary contract sends all six f64 values unchanged.
+            let bytes: Vec<_> = normalized
+                .iter()
+                .flatten()
+                .flat_map(|v| v.to_le_bytes())
+                .collect();
+            assert_eq!(bytes.len(), 6 * 8);
+            let decoded: Vec<_> = bytes
+                .chunks_exact(8)
+                .map(|chunk| f64::from_le_bytes(chunk.try_into().unwrap()))
+                .collect();
+            assert_eq!(
+                decoded,
+                normalized.into_iter().flatten().collect::<Vec<_>>()
+            );
+        }
+    }
 
     fn occluding_plate(z: f32, radius: f32) -> Mesh {
         Mesh {

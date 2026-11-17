@@ -1,6 +1,7 @@
 //! Stable, renderer-independent identities and reversible coordinates for paint surfaces.
 pub mod gesture;
 pub mod topology;
+pub mod transition;
 use glam::{Vec2, Vec3};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -68,6 +69,19 @@ pub struct EdgeRef {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct SourceHinge {
+    pub from_source_edge: u8,
+    pub to_source_edge: u8,
+    /// Original GLB shared edge, ordered like from_source_edge. Retained masks
+    /// need not touch it; this relation never adds triangles to those masks.
+    pub world: [[f32; 3]; 2],
+    /// Reviewed common near-edge support, parameterized on the original edge.
+    /// Crossing is allowed only where the image intersects one of these ranges.
+    pub support_intervals: Vec<[f32; 2]>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct EdgeConnection {
     pub id: String,
     pub from: EdgeRef,
@@ -77,6 +91,93 @@ pub struct EdgeConnection {
     /// Real seam gap in millimetres. The UI layout gap is never used here.
     pub physical_gap_mm: f32,
     pub propagation: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_hinge: Option<SourceHinge>,
+}
+
+/// Recover the original triangle from a stable retained fragment. This is an
+/// affine inverse in normalized source barycentrics, not a spatial neighbour fit.
+pub(crate) fn original_face_world(t: &PaintTriangle) -> Option<[glam::DVec3; 3]> {
+    use glam::{DMat2, DVec2, DVec3};
+    let s = t.source_barycentric.map(|b| {
+        let sum = b.into_iter().map(f64::from).sum::<f64>();
+        DVec2::new(f64::from(b[1]) / sum, f64::from(b[2]) / sum)
+    });
+    let matrix = DMat2::from_cols(s[1] - s[0], s[2] - s[0]);
+    let w = t.world.map(|p| DVec3::from_array(p.map(f64::from)));
+    let height = (w[1] - w[0]).cross(w[2] - w[0]).length()
+        / (w[1] - w[0])
+            .length()
+            .max((w[2] - w[0]).length())
+            .max((w[2] - w[1]).length());
+    if matrix.determinant().abs() <= 1e-12 || !height.is_finite() || height <= 2e-6 {
+        return None;
+    }
+    let inverse = matrix.inverse();
+    let result = [DVec2::ZERO, DVec2::X, DVec2::Y].map(|p| {
+        let q = inverse * (p - s[0]);
+        w[0] + (w[1] - w[0]) * q.x + (w[2] - w[0]) * q.y
+    });
+    result.iter().all(|p| p.is_finite()).then_some(result)
+}
+
+pub(crate) fn source_hinge_geometry(
+    edge: &EdgeConnection,
+    from: &PaintTriangle,
+    to: &PaintTriangle,
+) -> Option<([glam::DVec3; 3], [glam::DVec3; 3])> {
+    let h = edge.source_hinge.as_ref()?;
+    if h.from_source_edge > 2
+        || h.to_source_edge > 2
+        || from.part_id != to.part_id
+        || from.id.source_mesh != to.id.source_mesh
+        || from.id.primitive != to.id.primitive
+        || from.id.source_triangle == to.id.source_triangle
+        || edge.physical_gap_mm != 0.
+        || !edge.propagation
+        || h.support_intervals.is_empty()
+        || h.support_intervals
+            .iter()
+            .any(|[a, b]| !a.is_finite() || !b.is_finite() || *a < 0. || *b > 1. || a >= b)
+    {
+        return None;
+    }
+    let a = original_face_world(from)?;
+    let b = original_face_world(to)?;
+    let hinge = h.world.map(|p| glam::DVec3::from_array(p.map(f64::from)));
+    let direction = (hinge[1] - hinge[0]).try_normalize()?;
+    if !hinge.iter().all(|p| p.is_finite()) {
+        return None;
+    }
+    for (i, original, reversed) in [
+        (h.from_source_edge, a, false),
+        (h.to_source_edge, b, edge.reversed),
+    ] {
+        let mut endpoints = [original[i as usize], original[(i as usize + 1) % 3]];
+        if reversed {
+            endpoints.reverse();
+        }
+        if endpoints
+            .into_iter()
+            .zip(hinge)
+            .any(|(p, q)| p.distance(q) > 5e-6)
+        {
+            return None;
+        }
+    }
+    let inward = |p: glam::DVec3| {
+        let q = p - hinge[0];
+        (q - direction * q.dot(direction)).try_normalize()
+    };
+    // These authored relations are ordinary exterior bends, not coincident
+    // sheets or a folded-back return. The generator separately proves GLB adjacency.
+    if inward(a[(h.from_source_edge as usize + 2) % 3])?
+        .dot(inward(b[(h.to_source_edge as usize + 2) % 3])?)
+        >= 0.
+    {
+        return None;
+    }
+    Some((a, b))
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -123,7 +224,7 @@ impl PaintSurfaceMap {
                     triangle.id.stable_key()
                 ));
             }
-            let w = triangle.world.map(Vec3::from_array);
+            let w = triangle.world.map(|p| Vec3::from_array(p).as_dvec3());
             let uv = triangle.paint_uv.map(Vec2::from_array);
             if triangle.source_barycentric.iter().any(|b| {
                 b.iter()
@@ -137,7 +238,7 @@ impl PaintSurfaceMap {
             }
             if w.iter().any(|v| !v.is_finite())
                 || uv.iter().any(|v| !v.is_finite())
-                || (w[1] - w[0]).cross(w[2] - w[0]).length_squared() < 1e-24
+                || (w[1] - w[0]).cross(w[2] - w[0]).length_squared() == 0.
                 || (uv[1] - uv[0]).perp_dot(uv[2] - uv[0]).abs() < 1e-12
             {
                 return Err(format!(
@@ -170,6 +271,12 @@ impl PaintSurfaceMap {
                 .iter()
                 .find(|t| t.id == edge.to.triangle)
                 .unwrap();
+            if edge.source_hinge.is_some() {
+                if source_hinge_geometry(edge, from, to).is_none() {
+                    return Err(format!("invalid original source edge hinge {}", edge.id));
+                }
+                continue;
+            }
             let edge_points = |points: &[[f32; 3]; 3], index: u8| {
                 [
                     Vec3::from_array(points[index as usize]),
@@ -386,6 +493,8 @@ fn interpolate(a: (Vec3, Vec3), b: (Vec3, Vec3), t: f32) -> (Vec3, Vec3) {
 }
 
 pub fn barycentric_2d(point: Vec2, tri: [Vec2; 3]) -> Option<Vec3> {
+    let tri = tri.map(|p| p.as_dvec2());
+    let point = point.as_dvec2();
     let a = tri[1] - tri[0];
     let b = tri[2] - tri[0];
     let d = point - tri[0];
@@ -395,7 +504,7 @@ pub fn barycentric_2d(point: Vec2, tri: [Vec2; 3]) -> Option<Vec3> {
     }
     let y = d.perp_dot(b) / det;
     let z = a.perp_dot(d) / det;
-    Some(Vec3::new(1. - y - z, y, z))
+    Some(Vec3::new((1. - y - z) as f32, y as f32, z as f32))
 }
 
 #[cfg(test)]
@@ -439,6 +548,29 @@ mod tests {
         assert_eq!(mapped.part_id, "front-door-left");
     }
     #[test]
+    fn positive_f32_world_fragments_are_retained_below_the_old_area_cutoff() {
+        let mut map = fixture();
+        map.triangles[0].world = [[1., 1., 1.], [1.0000001, 1., 1.], [1., 1.0000001, 1.]];
+        let w = map.triangles[0]
+            .world
+            .map(|p| Vec3::from_array(p).as_dvec3());
+        let cross_squared = (w[1] - w[0]).cross(w[2] - w[0]).length_squared();
+        assert!(cross_squared > 0. && cross_squared < 1e-24);
+        map.paint_fingerprint = map.fingerprint();
+        map.validate().unwrap();
+        let topology = topology::Topology::new(map.triangles.clone(), &[]);
+        assert!(
+            !topology
+                .coverage_at("front-door-left", [0.25, 0.25], [1., 1.], 0., false)
+                .is_empty()
+        );
+        // Actual degeneracy remains invalid, independently of area scale.
+        map.triangles[0].world[2] = map.triangles[0].world[1];
+        map.paint_fingerprint = map.fingerprint();
+        assert!(map.validate().unwrap_err().contains("degenerate"));
+    }
+
+    #[test]
     fn invalid_uv_degeneracy_duplicate_identity_and_missing_seam_target_fail() {
         let mut map = fixture();
         map.validate().unwrap();
@@ -466,6 +598,7 @@ mod tests {
             reversed: false,
             physical_gap_mm: 3.,
             propagation: true,
+            source_hinge: None,
         });
         assert!(map.validate().is_err());
     }
@@ -487,6 +620,7 @@ mod tests {
             reversed: false,
             physical_gap_mm: 0.,
             propagation: true,
+            source_hinge: None,
         });
         assert_ne!(a, map.fingerprint());
     }

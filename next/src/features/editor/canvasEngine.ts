@@ -39,7 +39,7 @@ export function coverageHit(layer:Layer,bitmap:HTMLCanvasElement,fragments:Cover
 export function imageGrabOffset(layer:Layer,point:{x:number;y:number}) {
   return {x:(point.x-.5)*layer.placement.widthMm,y:(point.y-.5)*layer.placement.heightMm};
 }
-export function maskPath(triangles: Float32Array, info: SurfaceInfo) {
+export function maskPath(triangles: Float64Array, info: SurfaceInfo) {
   const path = new Path2D();
   for (let i = 0; i < triangles.length; i += 6) {
     path.moveTo(triangles[i] * info.widthMm, triangles[i + 1] * info.heightMm);

@@ -61,6 +61,11 @@ __pycache__/
 /next/assets/paint/*
 !/next/assets/paint/README.md
 !/next/assets/paint/manifest.json
+!/next/assets/paint/su7-v25-verified/
+/next/assets/paint/su7-v25-verified/*
+!/next/assets/paint/su7-v25-verified/paint-map.json
+!/next/assets/paint/su7-v25-verified/build-report.json
+!/next/assets/paint/su7-v25-verified/README.md
 !/next/assets/paint/su7-v24-mirrored/
 /next/assets/paint/su7-v24-mirrored/*
 !/next/assets/paint/su7-v24-mirrored/paint-map.json

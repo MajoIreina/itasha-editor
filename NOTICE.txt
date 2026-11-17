@@ -2,5 +2,5 @@
 当前应用源码见 next/src、next/src-tauri 与 next/crates；依赖和版本见 next/package.json、next/pnpm-lock.yaml、next/Cargo.lock。
 车辆模型、原厂材质、配置来源为用户提供的小米汽车配置器存档及处理后的 SU7 模型包；来源标识见 config/vehicles.json、vehicles/*/backend-adapter.json 和 next/catalog/vehicles.json。
 仓库仅保留当前漆面编辑映射与必要回归样本；原始捕获、GLB、贴图、Blender 工程和第三方运行时单独保留，不随源码推送。
-漆面映射为派生编辑数据，几何近似与未验收范围见 docs/NEXT主线切换-2026-11-17.md 及 docs/重构设计，不代表厂商原始算法或重新授予第三方资产许可。
+漆面映射为派生编辑数据，当前查验范围和精度限制见 docs/整车跨面复查-2026-11-17.md；历史证据保留于 docs/NEXT主线切换-2026-11-17.md 及 docs/重构设计。不代表厂商原始算法或重新授予第三方资产许可。
 旧版 Electron/ImageMagick 的运行时声明仍在本机历史目录保留，不是 NEXT 运行依赖。各依赖保留其原有许可关系。

@@ -84,15 +84,21 @@ impl Node {
             return;
         }
         for face in &self.faces {
-            let e1 = face.p[1] - face.p[0];
-            let e2 = face.p[2] - face.p[0];
+            let p = face.p.map(|p| p.as_dvec3());
+            let origin = origin.as_dvec3();
+            let direction = direction.as_dvec3();
+            let e1 = p[1] - p[0];
+            let e2 = p[2] - p[0];
+            let normal = e1.cross(e2);
             let h = direction.cross(e2);
             let det = e1.dot(h);
-            if det.abs() < 1e-8 {
+            // Test the ray's angle, not an area-dependent determinant. A valid
+            // microscopic triangle must remain selectable along its normal.
+            if !det.is_finite() || det.abs() <= normal.length() * direction.length() * 1e-12 {
                 continue;
             }
             let inv = 1. / det;
-            let s = origin - face.p[0];
+            let s = origin - p[0];
             let u = inv * s.dot(h);
             if !(0. ..=1.).contains(&u) {
                 continue;
@@ -103,13 +109,13 @@ impl Node {
                 continue;
             }
             let t = inv * e2.dot(q);
-            if t > 0.00001 && best.as_ref().is_none_or(|b| t < b.0) {
+            if t > 0.00001 && best.as_ref().is_none_or(|b| t < f64::from(b.0)) {
                 *best = Some((
-                    t,
+                    t as f32,
                     face.surface,
-                    e1.cross(e2).normalize_or_zero(),
+                    normal.normalize().as_vec3(),
                     face.id.clone(),
-                    Vec3::new(1. - u - v, u, v),
+                    Vec3::new((1. - u - v) as f32, u as f32, v as f32),
                 ));
             }
         }
@@ -275,9 +281,9 @@ impl Geometry {
     }
     pub fn plane_point(&self, layer: &Layer, origin: Vec3, direction: Vec3) -> Option<Vec2> {
         let center = Vec2::new(layer.placement.x_mm as f32, layer.placement.y_mm as f32);
-        let p = self.world(layer, center)?;
-        let ux = self.world(layer, center + Vec2::X)? - p;
-        let uy = self.world(layer, center + Vec2::Y)? - p;
+        let (p, ux, uy) = self
+            .topology
+            .tangent_frame(&layer.placement.surface_id, center)?;
         let normal = ux.cross(uy).normalize_or_zero();
         let den = normal.dot(direction);
         if den.abs() < 0.001 {
@@ -295,36 +301,22 @@ impl Geometry {
         if det.abs() < 1e-24 {
             return None;
         }
-        Some(
-            center
-                + Vec2::new(
-                    (c * ux.dot(delta) - b * uy.dot(delta)) / det,
-                    (a * uy.dot(delta) - b * ux.dot(delta)) / det,
-                ),
+        self.topology.chart_offset(
+            &layer.placement.surface_id,
+            center,
+            Vec2::new(
+                (c * ux.dot(delta) - b * uy.dot(delta)) / det,
+                (a * uy.dot(delta) - b * ux.dot(delta)) / det,
+            ),
         )
     }
 
-    /// Exact local chart derivatives at the anchor. Do not extrapolate separate
-    /// far-away UV corners: packed islands and curved panels make that unstable.
+    /// Physical-mm axes shared with coverage. Chart scale/shear must not skew
+    /// the controls after the artwork itself has been unfolded isometrically.
     pub fn anchor_frame(&self, layer: &Layer) -> Option<(Vec3, Vec3, Vec3)> {
         let p = &layer.placement;
         let center = Vec2::new(p.x_mm as f32, p.y_mm as f32);
-        let (index, b) = self.topology.locate(&p.surface_id, center)?;
-        let triangle = &self.topology.triangles[index];
-        let uv = triangle.paint_uv.map(Vec2::from_array);
-        let world = triangle.world.map(Vec3::from_array);
-        let a = uv[1] - uv[0];
-        let c = uv[2] - uv[0];
-        let det = a.perp_dot(c);
-        if det.abs() < 1e-12 {
-            return None;
-        }
-        let e = world[1] - world[0];
-        let f = world[2] - world[0];
-        let u = (e * c.y - f * a.y) / det;
-        let v = (f * a.x - e * c.x) / det;
-        let origin = world[0] * b.x + world[1] * b.y + world[2] * b.z;
-        (u.is_finite() && v.is_finite() && origin.is_finite()).then_some((origin, u, v))
+        self.topology.tangent_frame(&p.surface_id, center)
     }
 
     /// Resolve pointer input against whichever visible paint surface is under it.
@@ -396,22 +388,31 @@ pub fn transport_anchor(
         },
         grab_offset[1],
     ];
-    Some(move_anchor(&oriented, point, offset))
+    let rotation = glam::Mat2::from_angle(angle);
+    let center = topology.chart_offset(
+        &point.surface_id,
+        point.point,
+        -(rotation * Vec2::from_array(offset)),
+    )?;
+    oriented.placement.surface_id = point.surface_id.clone();
+    oriented.placement.x_mm = f64::from(center.x);
+    oriented.placement.y_mm = f64::from(center.y);
+    Some(oriented)
 }
 pub fn barycentric_world(p: Vec3, t: [Vec3; 3]) -> Option<Vec3> {
+    let t = t.map(|p| p.as_dvec3());
+    let p = p.as_dvec3();
     let a = t[1] - t[0];
     let b = t[2] - t[0];
     let q = p - t[0];
-    let aa = a.dot(a);
-    let ab = a.dot(b);
-    let bb = b.dot(b);
-    let det = aa * bb - ab * ab;
-    if det.abs() < 1e-24 {
+    let normal = a.cross(b);
+    let det = normal.length_squared();
+    if !det.is_finite() || det == 0. {
         return None;
     }
-    let y = (bb * a.dot(q) - ab * b.dot(q)) / det;
-    let z = (aa * b.dot(q) - ab * a.dot(q)) / det;
-    Some(Vec3::new(1. - y - z, y, z))
+    let y = q.cross(b).dot(normal) / det;
+    let z = a.cross(q).dot(normal) / det;
+    Some(Vec3::new((1. - y - z) as f32, y as f32, z as f32))
 }
 pub const HANDLES: [[f32; 2]; 8] = [
     [-1., -1.],
@@ -508,6 +509,30 @@ pub fn transform_screen_control(
     let chart = glam::Mat2::from_angle((p.rotation_deg as f32).to_radians()) * local;
     transform(layer, Vec2::ZERO, chart, Some(handle), false, shift)
 }
+
+/// Convert the physical centre shift of a resize back into the packed chart.
+/// Width/height remain real millimetres, including on scaled or skewed charts.
+pub fn transform_surface_control(
+    topology: &itasha_surface_map::topology::Topology,
+    layer: &Layer,
+    frame: ScreenControlFrame,
+    start: Vec2,
+    current: Vec2,
+    handle: usize,
+    shift: bool,
+) -> Option<Layer> {
+    let mut result = transform_screen_control(layer, frame, start, current, handle, shift);
+    let p = &layer.placement;
+    let origin = Vec2::new(p.x_mm as f32, p.y_mm as f32);
+    let delta = Vec2::new(
+        (result.placement.x_mm - p.x_mm) as f32,
+        (result.placement.y_mm - p.y_mm) as f32,
+    );
+    let center = topology.chart_offset(&p.surface_id, origin, delta)?;
+    result.placement.x_mm = f64::from(center.x);
+    result.placement.y_mm = f64::from(center.y);
+    Some(result)
+}
 /// Screen-space hit areas overlap on small or foreshortened graphics.
 /// Prefer the nearest control instead of the first control in drawing order.
 pub fn nearest_handle(points: &[Vec2], pointer: Vec2, radius: f32) -> Option<usize> {
@@ -594,6 +619,42 @@ pub fn transform(
 mod tests {
     use super::*;
     use itasha_contracts::{LayerSource, Placement, Shape};
+
+    #[test]
+    fn picking_retains_positive_submicrometre_fragments() {
+        let points = [
+            Vec3::new(1., 1., 1.),
+            Vec3::new(1.0000001, 1., 1.),
+            Vec3::new(1., 1.0000001, 1.),
+        ];
+        for (point, expected) in points.into_iter().zip([Vec3::X, Vec3::Y, Vec3::Z]) {
+            assert_eq!(barycentric_world(point, points), Some(expected));
+        }
+        assert!(barycentric_world(points[0], [points[0], points[1], points[1]]).is_none());
+    }
+
+    #[test]
+    fn normal_rays_can_select_small_positive_faces_below_the_old_determinant_cutoff() {
+        let node = Node::build(vec![Triangle {
+            p: [
+                Vec3::new(1., 1., 1.),
+                Vec3::new(1.00004, 1., 1.),
+                Vec3::new(1., 1.00008, 1.),
+            ],
+            surface: Some(0),
+            id: test_triangle_id(0),
+        }]);
+        let mut best = None;
+        node.hit(Vec3::new(1.00001, 1.00002, 2.), -Vec3::Z, &mut best);
+        let hit = best.expect("normal ray must reach a retained microscopic face");
+        assert!((hit.0 - 1.).abs() < 1e-6);
+        assert_eq!(hit.1, Some(0));
+        assert!(hit.4.min_element() > 0.2);
+        let mut parallel = None;
+        node.hit(Vec3::new(1., 1., 2.), Vec3::X, &mut parallel);
+        assert!(parallel.is_none());
+    }
+
     fn control_layer() -> Layer {
         Layer {
             id: uuid::Uuid::nil(),
@@ -818,5 +879,75 @@ mod tests {
             + glam::Mat2::from_angle(angle) * offset;
         assert!(recovered.distance(point.point) < 1e-4);
         assert!(moved.placement.flip_x);
+    }
+
+    #[test]
+    fn physical_grab_and_resize_do_not_inherit_chart_stretch_or_shear() {
+        use itasha_surface_map::{PaintTriangle, topology::Topology};
+        let chart = |p: Vec2| Vec2::new(3. * p.x + 0.6 * p.y, -0.2 * p.x + 0.45 * p.y);
+        let corners = [Vec2::ZERO, Vec2::new(1000., 0.), Vec2::new(0., 1000.)];
+        let topology = Topology::new(
+            vec![PaintTriangle {
+                id: test_triangle_id(0),
+                part_id: "su7.front-left-door".into(),
+                region_id: "exterior".into(),
+                chart_id: "skewed".into(),
+                world: corners.map(|p| [p.x * 0.001, p.y * 0.001, 0.]),
+                paint_uv: corners.map(|p| chart(p).to_array()),
+                source_barycentric: [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            }],
+            &[],
+        );
+        let mut layer = control_layer();
+        layer.placement.surface_id = "su7.front-left-door".into();
+        let anchor = chart(Vec2::new(200., 200.));
+        layer.placement.x_mm = f64::from(anchor.x);
+        layer.placement.y_mm = f64::from(anchor.y);
+        let point = SurfaceEditPoint {
+            surface_id: layer.placement.surface_id.clone(),
+            point: chart(Vec2::new(400., 300.)),
+        };
+        let offset = Vec2::new(30., -20.);
+        let moved = transport_anchor(&topology, &layer, &point, offset.to_array()).unwrap();
+        let moved_center = Vec2::new(moved.placement.x_mm as f32, moved.placement.y_mm as f32);
+        let (world, u, v) = topology
+            .tangent_frame(&point.surface_id, moved_center)
+            .unwrap();
+        let angle = (moved.placement.rotation_deg as f32).to_radians();
+        let local_offset = glam::Mat2::from_angle(angle) * offset;
+        let grabbed = world + u * local_offset.x + v * local_offset.y;
+        assert!(grabbed.distance(Vec3::new(0.4, 0.3, 0.)) < 1e-6);
+        assert_eq!(moved.placement.width_mm, layer.placement.width_mm);
+        assert_eq!(moved.placement.height_mm, layer.placement.height_mm);
+
+        let frame = ScreenControlFrame {
+            center: Vec2::new(300., 200.),
+            x: Vec2::X,
+            y: Vec2::Y,
+            size: Vec2::new(160., 80.),
+        };
+        let start = frame.points(26.)[3];
+        let resized = transform_surface_control(
+            &topology,
+            &layer,
+            frame,
+            start,
+            start + Vec2::new(32., 0.),
+            3,
+            false,
+        )
+        .unwrap();
+        let fixed = |l: &Layer| {
+            let center = Vec2::new(l.placement.x_mm as f32, l.placement.y_mm as f32);
+            let (origin, u, v) = topology
+                .tangent_frame(&l.placement.surface_id, center)
+                .unwrap();
+            let (sin, cos) = (l.placement.rotation_deg as f32).to_radians().sin_cos();
+            origin - (u * cos + v * sin) * l.placement.width_mm as f32 * 0.5
+        };
+        assert!(
+            fixed(&resized).distance(fixed(&layer)) < 1e-6,
+            "resizing must keep the opposite physical edge fixed on a skewed chart"
+        );
     }
 }

@@ -1,4 +1,11 @@
-"""Rebuild su7.front-left-lower-fender as the mirror image of the right part.
+"""Historical v24 nearest-centroid approximation; not the runtime build chain.
+
+The 2026-11-17 audit found many-to-one source-face matches and incomplete left
+coverage. Fixing the old double UV permutation below does not make centroid
+matching reliable. Use repair-reviewed-paint-gaps.py and its independent source
+union audit for the reviewed successor; retain this tool for reproduction only.
+
+Rebuild su7.front-left-lower-fender as the mirror image of the right part.
 
 The user confirmed the left lower fender is the axisymmetric counterpart of the
 right one (mirror across z=0). They are separate connected components of
@@ -254,11 +261,10 @@ def main():
             invalid.append(triangle['id']['sourceTriangle'])
             continue
         uv = [[chart_width - p[0], p[1]] for p in triangle['paintUv']]
-        # `paintUv` is still in right-corner order while `world` now follows the
-        # matched left-corner order. Move the UV corners along with the world
-        # corners so the rebuilt triangle's affine frame stays consistent with the
-        # right triangle it mirrors; otherwise ChartFrame reads a scrambled scale.
-        uv = [uv[perm.index(k)] for k in range(3)]
+        # The column permutation changes which left source corner each weight
+        # refers to. It does not change fragment row order: world[k] still
+        # corresponds to right fragment row k, so paintUv must keep that order.
+        # A second permutation of UV rows scrambles the physical edge lengths.
         rebuilt.append({
             'id': {
                 'sourceMesh': MESH_NODE,

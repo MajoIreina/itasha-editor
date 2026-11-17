@@ -124,17 +124,13 @@ pub(crate) async fn viewport_load(
     let (plan, settings, upgraded) = blocking(state.inner().clone(), move |app| {
         let view = app.view()?;
         let plan = su7::plan(&view, &session)?;
-        // Each reviewed predecessor upgrades independently; every earlier
-        // triangle is preserved verbatim in the current map.
         let mut upgraded = false;
         if let Some(fingerprint) = view
             .project
             .as_ref()
             .and_then(|p| p.editor.model_fingerprint.clone())
-            && su7::verified_seam_upgrade(&plan, Some(&fingerprint))?
         {
-            upgraded =
-                app.rebind_surface_connections(&session, &fingerprint, su7::CURRENT_PAINT)?;
+            upgraded = su7::upgrade_mapping(app, &plan, &session, &fingerprint)?;
         }
         Ok((plan, view.settings, upgraded))
     })

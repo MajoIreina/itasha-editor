@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { artworkBitmap, drawCoverage, coveragePoint, imageGrabOffset, localPoint, type CoverageFragment } from './canvasEngine';
+import { artworkBitmap, drawCoverage, coveragePoint, imageGrabOffset, type CoverageFragment } from './canvasEngine';
 import type { CanvasEditor } from './useCanvasEditor';
 import type { Action, Layer, Project } from '../../bridge/desktop';
 import { mutation } from '../../bridge/desktop';
-import { HANDLES, transformLayer } from './transform';
+import { chartVector, controlPoints, coverageMetricFrame, IDENTITY_FRAME, nearestControl, transformMetricLayer, type MetricFrame } from './metricControls';
 import { wholeLayout } from './wholeLayout';
 import './canvas.css';
 type Point={x:number;y:number;surfaceId:string};
@@ -14,9 +14,9 @@ export function DesignCanvas({project,editor,busy,suspended,act}:{project:Projec
  const [mode,setMode]=useState<'whole'|'part'>('whole');
  const [preview,setPreview]=useState<Layer|null>(null);
  const panGesture=useRef<{x:number;y:number;pan:{x:number;y:number}}|null>(null);
- const [coverage,setCoverage]=useState(new Map<string,{key:string;fragments:CoverageFragment[]}>());
+ const [coverage,setCoverage]=useState(new Map<string,{key:string;surfaceId:string;fragments:CoverageFragment[];frame:MetricFrame|null}>());
  const settling=useRef(false);
- const gesture=useRef<{pending:Promise<void>;sequence:number;cancelled:boolean;original:Layer;base:Layer;value:Layer;start:Point;grabOffset:{x:number;y:number};handle:number|null;rotate:boolean;mutation:ReturnType<typeof mutation>}|null>(null);
+ const gesture=useRef<{pending:Promise<void>;sequence:number;cancelled:boolean;original:Layer;base:Layer;value:Layer;start:Point;grabOffset:{x:number;y:number};frame:MetricFrame|null;handle:number|null;rotate:boolean;mutation:ReturnType<typeof mutation>}|null>(null);
  const layout=useMemo(()=>wholeLayout(editor.surfaces),[editor.surfaces]);
  const tiles=useMemo(()=>mode==='whole'?layout.tiles:editor.surface?[{surface:editor.surface,x:0,y:0}]:[],[mode,layout,editor.surface]);
  const width=Math.max(1,...tiles.map(t=>t.x+t.surface.widthMm)),height=Math.max(1,...tiles.map(t=>t.y+t.surface.heightMm));
@@ -31,7 +31,9 @@ export function DesignCanvas({project,editor,busy,suspended,act}:{project:Projec
   if(!project||!editor.writable)return;let disposed=false;
   void Promise.all(layers.map(async layer=>{
    const key=JSON.stringify(layer.placement),cached=coverage.get(layer.id);
-   return [layer.id,cached?.key===key?cached:{key,fragments:await invoke<CoverageFragment[]>('viewport_coverage',{session:project.session,layer})}] as const;
+   if(cached?.key===key)return [layer.id,cached] as const;
+   const fragments=await invoke<CoverageFragment[]>('viewport_coverage',{session:project.session,layer});
+   return [layer.id,{key,surfaceId:layer.placement.surfaceId,fragments,frame:coverageMetricFrame(layer,fragments)}] as const;
   })).then(entries=>{if(!disposed)setCoverage(new Map(entries));}).catch(()=>{});
   return()=>{disposed=true;};
  },[layers,project?.session.sessionEpoch,editor.writable]);
@@ -69,10 +71,13 @@ export function DesignCanvas({project,editor,busy,suspended,act}:{project:Projec
     for(const layer of layers){const data=coverage.get(layer.id),bitmap=bitmaps.get(layer.id);if(data&&bitmap)drawCoverage(ctx,layer,bitmap,data.fragments,tile.surface.id);}
     const selected=layers.find(l=>l.id===editor.selectedId);
     if(selected?.placement.surfaceId===tile.surface.id&&selected.visible){
-     const p=selected.placement;ctx.translate(p.xMm,p.yMm);ctx.rotate(p.rotationDeg*Math.PI/180);
-     ctx.strokeStyle='#60a5fa';ctx.lineWidth=1.5/scale;ctx.strokeRect(-p.widthMm/2,-p.heightMm/2,p.widthMm,p.heightMm);
-     if(!selected.locked){ctx.fillStyle=light?'#fff':'#202020';for(const [x,y]of HANDLES){ctx.fillRect(x*p.widthMm/2-4/scale,y*p.heightMm/2-4/scale,8/scale,8/scale);ctx.strokeRect(x*p.widthMm/2-4/scale,y*p.heightMm/2-4/scale,8/scale,8/scale);}
-      ctx.beginPath();ctx.moveTo(0,-p.heightMm/2);ctx.lineTo(0,-p.heightMm/2-22/scale);ctx.stroke();ctx.beginPath();ctx.arc(0,-p.heightMm/2-22/scale,5/scale,0,Math.PI*2);ctx.fill();ctx.stroke();}
+     const data=coverage.get(selected.id),active=gesture.current;
+     const frame=active?.base.id===selected.id&&active.frame?active.frame:data?.surfaceId===selected.placement.surfaceId&&data.frame?data.frame:IDENTITY_FRAME;
+     const points=controlPoints(selected,frame,22/scale);
+     ctx.strokeStyle='#60a5fa';ctx.lineWidth=1.5/scale;ctx.beginPath();
+     for(const [order,index]of [0,2,4,6].entries()){const point=points[index];if(order)ctx.lineTo(point.x,point.y);else ctx.moveTo(point.x,point.y);}ctx.closePath();ctx.stroke();
+     if(!selected.locked){ctx.fillStyle=light?'#fff':'#202020';for(const point of points.slice(0,8)){ctx.fillRect(point.x-4/scale,point.y-4/scale,8/scale,8/scale);ctx.strokeRect(point.x-4/scale,point.y-4/scale,8/scale,8/scale);}
+      ctx.beginPath();ctx.moveTo(points[1].x,points[1].y);ctx.lineTo(points[8].x,points[8].y);ctx.stroke();ctx.beginPath();ctx.arc(points[8].x,points[8].y,5/scale,0,Math.PI*2);ctx.fill();ctx.stroke();}
     }
     ctx.restore();
    }
@@ -110,17 +115,18 @@ export function DesignCanvas({project,editor,busy,suspended,act}:{project:Projec
   if(e.button===1||(e.button===0&&e.altKey)){e.preventDefault();panGesture.current={x:e.clientX,y:e.clientY,pan};e.currentTarget.setPointerCapture(e.pointerId);return;}
   if(!project||busy||suspended||settling.current||!editor.writable||e.button!==0)return;e.currentTarget.focus();
   const r=e.currentTarget.getBoundingClientRect(),gx=(e.clientX-r.x-origin.x)/scale,gy=(e.clientY-r.y-origin.y)/scale;
-  let layer=layers.find(l=>l.id===editor.selectedId)??null,handle:number|null=null,rotate=false,p=locate(e.clientX,e.clientY),grabOffset:{x:number;y:number}|null=null;
+  let layer=layers.find(l=>l.id===editor.selectedId)??null,handle:number|null=null,rotate=false,p=locate(e.clientX,e.clientY),grabOffset:{x:number;y:number}|null=null,metricFrame:MetricFrame|null=null;
   if(layer&&!layer.locked){const tile=tiles.find(t=>t.surface.id===layer!.placement.surfaceId);if(tile){
-   const q=localPoint(layer,gx-tile.x,gy-tile.y),s=layer.placement;
-   const index=HANDLES.findIndex(([x,y])=>Math.hypot(q.x-x*s.widthMm/2,q.y-y*s.heightMm/2)*scale<12);
-   if(index>=0)handle=index;rotate=Math.hypot(q.x,q.y+s.heightMm/2+22/scale)*scale<12;
+   const data=coverage.get(layer.id);
+   metricFrame=data?.key===JSON.stringify(layer.placement)?data.frame:null;
+   const index=metricFrame?nearestControl(controlPoints(layer,metricFrame,22/scale),{x:gx-tile.x,y:gy-tile.y},12/scale):null;
+   if(index!==null&&index<8)handle=index;rotate=index===8;
    if(handle!==null||rotate)p={x:gx-tile.x,y:gy-tile.y,surfaceId:tile.surface.id};
   }}
   if(handle===null&&!rotate){layer=p?[...layers].reverse().find(l=>{const f=coverage.get(l.id),b=bitmaps.get(l.id),point=f&&b?coveragePoint(l,b,f.fragments,p!.surfaceId,p!.x,p!.y):null;if(point)grabOffset=imageGrabOffset(l,point);return point!==null;})??null:null;editor.setSelectedId(layer?.id??null);}
   if(!layer||layer.locked||!p)return;
   editor.setSurfaceId(layer.placement.surfaceId);e.currentTarget.setPointerCapture(e.pointerId);
-  gesture.current={pending:Promise.resolve(),sequence:0,cancelled:false,original:layer,base:layer,value:layer,start:p,grabOffset:grabOffset??localPoint(layer,p.x,p.y),handle,rotate,mutation:mutation(project)};
+  gesture.current={pending:Promise.resolve(),sequence:0,cancelled:false,original:layer,base:layer,value:layer,start:p,grabOffset:grabOffset??{x:0,y:0},frame:metricFrame,handle,rotate,mutation:mutation(project)};
   void editor.beginGesture(layer);
  }}
  onPointerMove={e=>{
@@ -140,13 +146,23 @@ export function DesignCanvas({project,editor,busy,suspended,act}:{project:Projec
     } catch { /* Keep the last valid placement when the grabbed centre leaves paint. */ }
    });return;
   }
-  else {if(p.surfaceId!==g.base.placement.surfaceId)return;g.value=transformLayer(g.base,g.start,p,g.handle,g.rotate,e.shiftKey);}
+  else {
+   if(p.surfaceId!==g.base.placement.surfaceId||!g.frame)return;
+   const value=transformMetricLayer(g.base,g.frame,g.start,p,g.handle,g.rotate,e.shiftKey),surface=editor.surfaces.find(s=>s.id===g.base.placement.surfaceId);
+   if(!value||!surface||!canvas.current?.getContext('2d')?.isPointInPath(surface.mask,value.placement.xMm,value.placement.yMm))return;
+   g.value=value;
+  }
   setPreview(g.value);void editor.previewGesture(g.value);
  }}
  onPointerUp={e=>{if(panGesture.current){panGesture.current=null;e.currentTarget.releasePointerCapture(e.pointerId);return;}const g=gesture.current;if(!g)return;gesture.current=null;e.currentTarget.releasePointerCapture(e.pointerId);settling.current=true;void g.pending.then(()=>g.cancelled?undefined:editor.commitGesture()).finally(()=>{settling.current=false;setPreview(null);});}}
  onPointerCancel={cancel} onLostPointerCapture={()=>{if(gesture.current||panGesture.current)cancel();}} onBlur={()=>{if(gesture.current)cancel();}}
  onKeyDown={e=>{if(e.key==='Escape'){cancel();return;}const layer=editor.selected;if(!project||!layer||layer.locked||busy||suspended||gesture.current)return;
   if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();void editor.edit({type:'delete',id:layer.id});}
-  else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const d=e.shiftKey?10:1;void act({type:'edit',mutation:mutation(project),operation:{type:'update',layer:{...layer,placement:{...layer.placement,xMm:layer.placement.xMm+(e.key==='ArrowLeft'?-d:e.key==='ArrowRight'?d:0),yMm:layer.placement.yMm+(e.key==='ArrowUp'?-d:e.key==='ArrowDown'?d:0)}}}});}
+  else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
+   e.preventDefault();const data=coverage.get(layer.id),frame=data?.key===JSON.stringify(layer.placement)?data.frame:null;
+   if(!frame)return;const d=e.shiftKey?10:1,delta=chartVector(frame,{x:e.key==='ArrowLeft'?-d:e.key==='ArrowRight'?d:0,y:e.key==='ArrowUp'?-d:e.key==='ArrowDown'?d:0});
+   const value={...layer,placement:{...layer.placement,xMm:layer.placement.xMm+delta.x,yMm:layer.placement.yMm+delta.y}},surface=editor.surfaces.find(s=>s.id===layer.placement.surfaceId);
+   if(surface&&canvas.current?.getContext('2d')?.isPointInPath(surface.mask,value.placement.xMm,value.placement.yMm))void act({type:'edit',mutation:mutation(project),operation:{type:'update',layer:value}});
+  }
  }}/>{!tiles.length&&<div className="canvas-loading">{editor.message}</div>}</div><div className="canvas-status"><span>{mode==='whole'?'整车展开 · 车头朝上':editor.surface?.name} · 展开候选资产</span><span title={editor.message}>{editor.message}</span></div></section>;
 }

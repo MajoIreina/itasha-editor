@@ -8,9 +8,9 @@
 
 已实现欢迎、新建和车型基础选配，SU7 Max 模块化原生 3D，2D/3D 素材编辑、图层变换、工程保存/重开、撤销/重做与关闭保护。工作区支持分屏、工程库和右侧面板布局；设置包括主题、快捷键、场景、性能偏好和目录。
 
-当前接入车漆、轮毂、内饰、方向盘四轴。生产漆面为 v24 mirrored；左前下翼子板使用镜像近似。跨面投影不等于无畸变施工展开。其他车型完整适配、黑化/碳纤维独立轴、施工导出、旧工程迁移、自动保存与发布验收尚未完成。
+当前接入车漆、轮毂、内饰、方向盘四轴。生产漆面为 manifest 指定的 v25 verified；左前下翼子板按真实左侧源面重建。素材以真实毫米传播和编辑，跨面投影不等于无畸变施工展开。其他车型完整适配、黑化/碳纤维独立轴、施工导出、旧工程迁移、自动保存与发布验收尚未完成。
 
-完整 Rust 回归有 1 项已知跨面传播失败，见 [主线切换记录](../docs/NEXT主线切换-2026-11-17.md) 和 [本次结构验证](../docs/结构整理-2026-11-17.md)。
+同日跨面修复及当前验证范围见 [整车跨面复查](../docs/整车跨面复查-2026-11-17.md)。[主线切换](../docs/NEXT主线切换-2026-11-17.md) 与 [结构整理](../docs/结构整理-2026-11-17.md) 保留修复前的失败证据。
 
 ## 目录与职责
 
@@ -66,6 +66,7 @@ cargo build -p itasha-desktop --features custom-protocol --locked
 $env:ITASHA_SMOKE_EXE = 'target/debug/itasha-desktop.exe'
 $env:ITASHA_MODEL_ROOT = 'L:/SU7/3D'
 pnpm test:desktop
+pnpm test:whole-car-seams
 ```
 
 桌面 smoke 启动真实 Tauri，使用 NEXT 自身的 Playwright/pngjs 和独立 `.reports/` 数据，验证 IPC、原生视口、编辑与保存重开。报告和构建产物不纳入 Git；GPU readback 不代替操作系统合成及人工车漆核对。

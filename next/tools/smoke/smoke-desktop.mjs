@@ -9,6 +9,13 @@ import { checkDoorCrossDisplay } from './check-door-cross-display.mjs';
 import { checkOrientationTransport } from './check-orientation-transport.mjs';
 import { checkEditorProperties } from './check-editor-properties.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const paintManifest = JSON.parse(fs.readFileSync(path.join(root, 'assets/paint/manifest.json'), 'utf8'));
+const paintMap = JSON.parse(fs.readFileSync(path.join(root, 'assets/paint', paintManifest.runtimePaint), 'utf8'));
+assert.equal(paintMap.paintFingerprint, paintManifest.paintFingerprint);
+const paintPartCounts = new Map();
+for (const triangle of paintMap.triangles) {
+  paintPartCounts.set(triangle.partId, (paintPartCounts.get(triangle.partId) || 0) + 1);
+}
 const modelRoot = path.resolve(root, process.env.ITASHA_MODEL_ROOT || '../../3D');
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright-core');
@@ -78,6 +85,14 @@ try {
       await new Promise(resolve => setTimeout(resolve, 200));
     }
     throw Error('Renderer wait timed out: ' + JSON.stringify(status));
+  };
+  const waitViewportGeometry = async () => {
+    const box = await page.locator('.native-viewport-host').boundingBox();
+    const dpi = await page.evaluate(() => devicePixelRatio);
+    assert(box, 'native viewport host must be visible');
+    return waitRenderer(s => s.visible && s.nativeVisible && s.nativeFrontmost &&
+      Math.abs(s.x - box.x * dpi) <= 1 && Math.abs(s.y - box.y * dpi) <= 1 &&
+      Math.abs(s.width - box.width * dpi) <= 1 && Math.abs(s.height - box.height * dpi) <= 1);
   };
   const waitTheme = theme => page.waitForFunction(theme => document.documentElement.dataset.theme === theme, theme);
   const selectTheme = async value => {
@@ -188,15 +203,18 @@ try {
   checks.push('dirty workspace navigation requires save, discard or cancel');
   checks.push('native create and authoritative Rust snapshot');
   const renderer = await waitRenderer();
-  assert.equal(renderer.stats.surfaceFingerprint, '109ba0aa146625f99b35050b2682edb6c0ad15b72e180c515c58867fa7d275d7');
+  assert.equal(renderer.stats.surfaceFingerprint, paintManifest.paintFingerprint);
   assert.equal(renderer.surfaces.length, 18, 'runtime must expose classified exterior parts plus the restored trunk');
+  assert.equal(renderer.surfaces.length, paintPartCounts.size);
+  for (const surface of renderer.surfaces) {
+    assert.equal(surface.triangles, paintPartCounts.get(surface.id), `${surface.id}: runtime mask must match the sealed map`);
+  }
   assert(renderer.surfaces.some(surface => surface.id === 'su7.trunk' && surface.triangles > 0),
     'restored trunk paint must reach the 2D canvas');
-  const leftLower = renderer.surfaces.find(surface => surface.id === 'su7.front-left-lower-fender');
-  assert(leftLower && leftLower.triangles === 1770, 'left lower fender must mirror all 1770 right-part triangles');
+  assert(paintPartCounts.has('su7.front-left-lower-fender'), 'reviewed left lower fender must be present');
   assert(!renderer.surfaces.some(surface => ['su7.left-sill', 'su7.right-sill'].includes(surface.id)),
     'unclassified sill geometry must stay out of the paint surfaces');
-  checks.push('runtime loads v24 mirrored map: 18 parts incl. trunk, left lower fender mirrored from the right, sills excluded');
+  checks.push('runtime loads the manifest fingerprint and all 18 exact part masks, including reviewed left lower fender and trunk; sills excluded');
   assert(renderer.nativeVisible, 'GPU child must be visible through its actual HWND');
   assert(renderer.nativeFrontmost, 'GPU child must cover WebView siblings at nine viewport sample points');
   assert.equal(renderer.state, 'ready', JSON.stringify(renderer));
@@ -440,12 +458,12 @@ try {
     assert(renderer.surfaces.find(surface => surface.id === id)?.triangles > 0, `${id} component mask missing`);
   }
   const maskBytes = await page.evaluate(async session => (await window.__TAURI_INTERNALS__.invoke('viewport_surface', { session, id: 'su7.front-left-door' })).byteLength, view.project.session);
-  assert(maskBytes > 1000, 'native binary surface mask missing');
+  assert.equal(maskBytes, renderer.surfaces.find(surface => surface.id === 'su7.front-left-door').triangles * 6 * 8, 'normalized masks use six little-endian f64 values per triangle');
   await page.getByRole('button', { name: '2D 画布', exact: true }).click();
   const maskAudit = [];
   for (const surface of renderer.surfaces) {
     const audit = await page.evaluate(async ({session, surface}) => {
-      const values = new Float32Array(await window.__TAURI_INTERNALS__.invoke('viewport_surface', {session, id:surface.id}));
+      const values = new Float64Array(await window.__TAURI_INTERNALS__.invoke('viewport_surface', {session, id:surface.id}));
       const canvas = document.createElement('canvas'); canvas.width=900;canvas.height=600;
       const ctx=canvas.getContext('2d');ctx.fillStyle='#202020';ctx.fillRect(0,0,900,600);
       const scale=Math.min(860/surface.widthMm,540/surface.heightMm);
@@ -599,8 +617,9 @@ try {
   const temporalAngle = temporalLayer.placement.rotationDeg;
   await page.getByLabel('图层旋转', { exact: true }).fill(String(temporalAngle + 5));
   await page.getByLabel('图层旋转', { exact: true }).press('Tab');
-  await waitProject(p => p.editor.layers.find(l => l.id === temporalLayer.id).placement.rotationDeg === temporalAngle + 5);
+  const temporalEditProject = await waitProject(p => p.editor.layers.find(l => l.id === temporalLayer.id).placement.rotationDeg === temporalAngle + 5);
   const temporalEdited = await waitRenderer(s => s.antialiasing === 'taa' && s.frames > temporalArtwork.frames
+    && s.renderedRevision === temporalEditProject.revision
     && s.visible && s.nativeVisible && !s.temporalPending && s.temporalSamples === 8);
   fs.copyFileSync(path.join(reportDir, 'data/native-viewport.png'), path.join(reportDir, 'antialiasing-taa-artwork-edited.png'));
   await new Promise(resolve => setTimeout(resolve, 250));
@@ -676,7 +695,7 @@ try {
     assert(info && info.triangles > 0 && info.widthMm > 0 && info.heightMm > 0);
     const uv = await page.evaluate(async ({session, id}) => {
       const buffer = await window.__TAURI_INTERNALS__.invoke('viewport_surface', {session, id});
-      const values = new Float32Array(buffer);
+      const values = new Float64Array(buffer);
       return {count: values.length, x: (values[0]+values[2]+values[4])/3, y: (values[1]+values[3]+values[5])/3};
     }, {session: view.project.session, id});
     assert.equal(uv.count, info.triangles * 6);
@@ -859,6 +878,7 @@ try {
   a = await page.locator('.viewport').boundingBox();
   b = await page.locator('.canvas').boundingBox();
   assert(b.y > a.y + a.height && Math.abs(a.x - b.x) < 2, 'panels must be stacked');
+  await waitViewportGeometry();
   const splitterBox = await separator.boundingBox();
   const workspaceBox = await page.locator('.workspace').boundingBox();
   const dragStart = { x: splitterBox.x + splitterBox.width / 2, y: splitterBox.y + 4 };
@@ -875,6 +895,7 @@ try {
   await page.waitForFunction(() => document.querySelector('.splitter').getAttribute('aria-valuenow') === '60');
   await page.getByRole('button', { name: '左右', exact: true }).click();
   await page.locator('.direction-horizontal').waitFor();
+  await waitViewportGeometry();
   const horizontalSeparator = await separator.boundingBox();
   const horizontalWorkspace = await page.locator('.workspace').boundingBox();
   const horizontalStart = { x: horizontalSeparator.x + horizontalSeparator.width / 2, y: horizontalSeparator.y + horizontalSeparator.height / 2 };

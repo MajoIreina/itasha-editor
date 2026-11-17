@@ -572,9 +572,9 @@ pub fn load(plan: &Plan) -> Result<Scene> {
             surface.mask = triangles
                 .iter()
                 .flat_map(|t| {
-                    t.paint_uv
-                        .into_iter()
-                        .flat_map(|p| [p[0] / width, p[1] / height])
+                    t.paint_uv.into_iter().flat_map(|p| {
+                        crate::surface::normalize_mask_point(p, [0.; 2], [width, height])
+                    })
                 })
                 .collect();
             surface.info.triangles = triangles.len();

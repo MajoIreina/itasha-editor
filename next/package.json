@@ -15,6 +15,7 @@
     "check:boundary": "node tools/checks/check-boundary.mjs",
     "test:transforms": "node tools/tests/test-transforms.mjs",
     "test:desktop": "node tools/smoke/smoke-desktop.mjs",
+    "test:whole-car-seams": "node tools/smoke/smoke-whole-car-seams.mjs",
     "inventory": "node tools/legacy/inventory-legacy.mjs",
     "catalog:build": "node tools/catalog/build-vehicle-catalog.mjs",
     "test:editor-properties": "node tools/tests/test-editor-properties.mjs",
