@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-select"
+description = "Enables the viewport_select command without any pre-configured scope."
+commands.allow = ["viewport_select"]
+
+[[permission]]
+identifier = "deny-viewport-select"
+description = "Denies the viewport_select command without any pre-configured scope."
+commands.deny = ["viewport_select"]

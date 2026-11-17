@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-load"
+description = "Enables the viewport_load command without any pre-configured scope."
+commands.allow = ["viewport_load"]
+
+[[permission]]
+identifier = "deny-viewport-load"
+description = "Denies the viewport_load command without any pre-configured scope."
+commands.deny = ["viewport_load"]

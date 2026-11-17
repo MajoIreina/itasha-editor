@@ -1,0 +1,31 @@
+.design-canvas{display:flex;flex-direction:column}
+.design-canvas .panel-title{flex-shrink:0;padding:0 10px;gap:8px;flex-wrap:nowrap}
+.canvas-controls{display:flex;align-items:center;gap:8px;min-width:0}
+.canvas-controls select{font-size:11px;padding:3px;max-width:170px}
+.canvas-controls button{font-size:10px;padding:3px 6px}
+.canvas-controls>span{font-size:10px;width:35px}
+.canvas-workarea{flex:1;position:relative;min-height:0;overflow:hidden}
+.canvas-workarea canvas{width:100%;height:100%;display:block;touch-action:none;outline:none}
+.canvas-workarea canvas:focus-visible{box-shadow:inset 0 0 0 1px var(--accent)}
+.canvas-loading{position:absolute;inset:0;display:grid;place-items:center;padding:20px;text-align:center;color:var(--text-muted);pointer-events:none}
+.canvas-status{height:26px;flex-shrink:0;display:flex;gap:12px;justify-content:space-between;align-items:center;padding:0 10px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);overflow:hidden;white-space:nowrap}
+.canvas-status>span:last-child{overflow:hidden;text-overflow:ellipsis}
+.asset-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
+.asset-grid button{padding:6px;min-width:0;text-align:left}
+.asset-grid img{width:100%;height:64px;object-fit:contain;background:var(--bg)}
+.asset-grid span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.layer-row{display:flex;gap:2px;align-items:center;border:1px solid transparent;border-radius:5px;margin:3px 0}
+.layer-row.active{background:var(--tinted);border-color:var(--accent)}
+.layer-row button{border:0;background:transparent;padding:4px 3px;font-size:10px}
+.layer-select{flex:1;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.layer-select small{display:block;font-size:9px;white-space:nowrap}
+.layer-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.layer-properties{padding-top:16px;margin-top:16px;border-top:1px solid var(--border)}
+.layer-properties input{margin:4px 0 8px;padding:6px}
+.layer-properties input[type=color],.dock-panel-body input[type=color]{height:32px;padding:3px;width:100%}
+.layer-properties textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);padding:8px}
+
+.canvas-controls>label{display:flex;flex-direction:row;align-items:center;gap:4px;white-space:nowrap;font-size:11px;margin:0}
+.canvas-controls input[type=checkbox]{width:auto;margin:0;accent-color:var(--accent)}
+.design-canvas .panel-title>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.canvas-controls select{min-width:75px;width:140px}

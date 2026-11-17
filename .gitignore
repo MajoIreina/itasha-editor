@@ -1,15 +1,15 @@
-# Build outputs and downloaded dependencies
-/backend/target/
-/desktop/node_modules/
-/desktop/electron/
-/desktop/native/
-/desktop/build-manifest.json
-/development/
-/runtime/
-/app-deps/
+# NEXT build outputs, downloaded dependencies and local reports
 node_modules/
+/next/target/
+/next/src-tauri/target/
+/next/src-tauri/gen/
+/next/dist/
+/next/.local-data/
+/next/.reports/
+**/_scratch/
 __pycache__/
 *.pyc
+*.log
 *.exe
 *.dll
 *.pdb
@@ -17,8 +17,20 @@ __pycache__/
 *.zip
 *.7z
 *.pending
+*.blend
+*.blend1
+*.glb
+*.gltf
 
-# User projects, machine settings, browser profiles and credentials
+# Frozen legacy source/runtime and machine data remain local
+/app/
+/backend/
+/desktop/
+/resources/
+/examples/
+/development/
+/runtime/
+/app-deps/
 /projects/
 /exports/
 /logs/
@@ -30,32 +42,42 @@ __pycache__/
 /.itasha-session.json
 /performance-settings.json
 /启动错误.txt
+/关闭后台服务.cmd
+/关闭后台服务.ps1
+/tools/*
+!/tools/git-auto-sync.ps1
+
+# Retain only catalog source data from the old registry
+/config/*
+!/config/vehicles.json
+/vehicles/*
+!/vehicles/README.md
+!/vehicles/*/
+/vehicles/*/*
+!/vehicles/*/backend-adapter.json
+
+# Paint history, unsealed maps and previews stay local.
+# Current runtime map, compatibility fixture and layout dimensions are versioned.
+/next/assets/paint/*
+!/next/assets/paint/README.md
+!/next/assets/paint/manifest.json
+!/next/assets/paint/su7-v24-mirrored/
+/next/assets/paint/su7-v24-mirrored/*
+!/next/assets/paint/su7-v24-mirrored/paint-map.json
+!/next/assets/paint/su7-v24-mirrored/build-report.json
+!/next/assets/paint/su7-v24-mirrored/README.md
+!/next/assets/paint/su7-v21-classified-only/
+/next/assets/paint/su7-v21-classified-only/*
+!/next/assets/paint/su7-v21-classified-only/paint-map.json
+!/next/assets/paint/su7-v21-classified-only/build-report.json
+!/next/assets/paint/su7-v15-charge-cover/
+/next/assets/paint/su7-v15-charge-cover/*
+!/next/assets/paint/su7-v15-charge-cover/compact-report.json
+
 .env
 .env.*
 !.env.example
 *.pem
 *.key
-
-# Offline third-party capture stays local; source customizations are versioned
-/resources/*
-!/resources/custom.js
-!/resources/custom.css
-!/resources/README.md
-/vehicles/data/
-/vehicles/download-failures.json
-/vehicles/*/*
-!/vehicles/*/backend-adapter.json
-!/vehicles/*/adapter.json
-!/vehicles/*/acceptance.json
-!/vehicles/*/source.json
-
-# Generated reports, screenshots and local scratch files
-/tools/acceptance/
-/tools/*-verification.json
-/tools/verification.json
-/tools/selection-preview.png
-/tools/fixtures/images/formats-verification.json
-/界面预览.png
-*.log
 Thumbs.db
 .DS_Store

@@ -1,0 +1,326 @@
+{
+  "source": "assets\\paint\\su7-v15-charge-cover\\paint-map.json",
+  "parts": [
+    {
+      "partId": "su7.front-left-door",
+      "triangles": 13582,
+      "mainCharts": 302,
+      "supplementCharts": 722,
+      "microTriangles": 29,
+      "precisionStripTriangles": 20,
+      "supplementAreaM2": 0.05799442948921795,
+      "areaM2": 0.8644139583644685,
+      "dimensionsMm": [
+        1199.269287109375,
+        1685.0284423828125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.rear-left-door",
+      "triangles": 11650,
+      "mainCharts": 396,
+      "supplementCharts": 580,
+      "microTriangles": 1,
+      "precisionStripTriangles": 24,
+      "supplementAreaM2": 0.06996732073854403,
+      "areaM2": 0.7379757286974664,
+      "dimensionsMm": [
+        1004.2032470703125,
+        2087.637939453125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-right-door",
+      "triangles": 14161,
+      "mainCharts": 300,
+      "supplementCharts": 624,
+      "microTriangles": 33,
+      "precisionStripTriangles": 2,
+      "supplementAreaM2": 0.059458685058202114,
+      "areaM2": 0.8655488780728948,
+      "dimensionsMm": [
+        1197.171630859375,
+        1653.5684814453125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.rear-right-door",
+      "triangles": 11569,
+      "mainCharts": 335,
+      "supplementCharts": 615,
+      "microTriangles": 13,
+      "precisionStripTriangles": 21,
+      "supplementAreaM2": 0.05604502616201847,
+      "areaM2": 0.7382043703697593,
+      "dimensionsMm": [
+        1128.2567138671875,
+        2581.491943359375
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.hood",
+      "triangles": 13873,
+      "mainCharts": 395,
+      "supplementCharts": 995,
+      "microTriangles": 19,
+      "precisionStripTriangles": 43,
+      "supplementAreaM2": 0.03590620432461358,
+      "areaM2": 1.7899319343784816,
+      "dimensionsMm": [
+        1664.0460205078125,
+        2173.95458984375
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.trunk",
+      "triangles": 11224,
+      "mainCharts": 532,
+      "supplementCharts": 877,
+      "microTriangles": 36,
+      "precisionStripTriangles": 6,
+      "supplementAreaM2": 0.18826844298348544,
+      "areaM2": 0.5106343346430403,
+      "dimensionsMm": [
+        1339.02685546875,
+        1364.326904296875
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-bumper",
+      "triangles": 24447,
+      "mainCharts": 873,
+      "supplementCharts": 2303,
+      "microTriangles": 51,
+      "precisionStripTriangles": 52,
+      "supplementAreaM2": 0.5921870971527926,
+      "areaM2": 0.830174223290971,
+      "dimensionsMm": [
+        1981.046142578125,
+        2572.822265625
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-c-ring",
+      "triangles": 3060,
+      "mainCharts": 47,
+      "supplementCharts": 152,
+      "microTriangles": 1,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.04323574769137652,
+      "areaM2": 0.06947675459266447,
+      "dimensionsMm": [
+        1293.1788330078125,
+        645.2452392578125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.rear-c-ring",
+      "triangles": 5745,
+      "mainCharts": 108,
+      "supplementCharts": 296,
+      "microTriangles": 2,
+      "precisionStripTriangles": 4,
+      "supplementAreaM2": 0.04232974767892673,
+      "areaM2": 0.1514826505686696,
+      "dimensionsMm": [
+        1544.465576171875,
+        617.5079345703125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.rear-left-fender",
+      "triangles": 17782,
+      "mainCharts": 1261,
+      "supplementCharts": 1270,
+      "microTriangles": 69,
+      "precisionStripTriangles": 114,
+      "supplementAreaM2": 0.14739740965211756,
+      "areaM2": 0.7552479106347374,
+      "dimensionsMm": [
+        2708.511474609375,
+        4598.46044921875
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 10
+    },
+    {
+      "partId": "su7.rear-right-fender",
+      "triangles": 15667,
+      "mainCharts": 1125,
+      "supplementCharts": 1245,
+      "microTriangles": 143,
+      "precisionStripTriangles": 115,
+      "supplementAreaM2": 0.12486101103909508,
+      "areaM2": 0.7888117020294038,
+      "dimensionsMm": [
+        2281.6328125,
+        4637.80224609375
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 4
+    },
+    {
+      "partId": "su7.rear-bumper",
+      "triangles": 16630,
+      "mainCharts": 817,
+      "supplementCharts": 1118,
+      "microTriangles": 18,
+      "precisionStripTriangles": 34,
+      "supplementAreaM2": 0.25099662476606943,
+      "areaM2": 0.7288799083185407,
+      "dimensionsMm": [
+        2213.05615234375,
+        2319.226806640625
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-left-lower-fender",
+      "triangles": 1535,
+      "mainCharts": 4,
+      "supplementCharts": 40,
+      "microTriangles": 0,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.0077776281499024645,
+      "areaM2": 0.10898234173158632,
+      "dimensionsMm": [
+        521.7542114257812,
+        745.5252075195312
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-right-lower-fender",
+      "triangles": 1464,
+      "mainCharts": 3,
+      "supplementCharts": 41,
+      "microTriangles": 0,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.00814940541736044,
+      "areaM2": 0.10906822627052525,
+      "dimensionsMm": [
+        520.614990234375,
+        756.9305419921875
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-left-fender",
+      "triangles": 4572,
+      "mainCharts": 45,
+      "supplementCharts": 247,
+      "microTriangles": 2,
+      "precisionStripTriangles": 3,
+      "supplementAreaM2": 0.034520661852731116,
+      "areaM2": 0.3609783790908526,
+      "dimensionsMm": [
+        1004.8988037109375,
+        1699.5294189453125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.front-right-fender",
+      "triangles": 4673,
+      "mainCharts": 63,
+      "supplementCharts": 323,
+      "microTriangles": 7,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.03470255955542855,
+      "areaM2": 0.3612226581541392,
+      "dimensionsMm": [
+        1089.759521484375,
+        1850.1282958984375
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.left-sill",
+      "triangles": 232,
+      "mainCharts": 21,
+      "supplementCharts": 22,
+      "microTriangles": 0,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.00024456240907028603,
+      "areaM2": 0.0006785559529158789,
+      "dimensionsMm": [
+        275.560791015625,
+        856.1951293945312
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.right-sill",
+      "triangles": 922,
+      "mainCharts": 51,
+      "supplementCharts": 65,
+      "microTriangles": 0,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.0008352275744990654,
+      "areaM2": 0.001860806818650816,
+      "dimensionsMm": [
+        278.885986328125,
+        864.6323852539062
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.rear-spoiler",
+      "triangles": 3610,
+      "mainCharts": 96,
+      "supplementCharts": 235,
+      "microTriangles": 8,
+      "precisionStripTriangles": 3,
+      "supplementAreaM2": 0.03096884273117356,
+      "areaM2": 0.314884346900748,
+      "dimensionsMm": [
+        1321.7772216796875,
+        768.5929565429688
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    },
+    {
+      "partId": "su7.charge-cover",
+      "triangles": 539,
+      "mainCharts": 1,
+      "supplementCharts": 0,
+      "microTriangles": 0,
+      "precisionStripTriangles": 0,
+      "supplementAreaM2": 0.0,
+      "areaM2": 0.03975922614336014,
+      "dimensionsMm": [
+        140.9654541015625,
+        236.9327392578125
+      ],
+      "positiveAreaOverlaps": 0,
+      "precisionRepairs": 0
+    }
+  ],
+  "existingWorldAndSourceIdentityPreserved": true
+}

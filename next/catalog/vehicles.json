@@ -1,0 +1,1027 @@
+[
+  {
+    "id": "su7",
+    "name": "SU7 Max",
+    "family": "轿车",
+    "bodyStyle": "sedan",
+    "sourceSha256": "1f14aeb03e8ed7ffb4f5830d93566d73173459e216d057ce37487a9ecaee1a31",
+    "paint": [
+      {
+        "id": "600061067",
+        "name": "卡布里蓝",
+        "swatch": "rgba(66, 116, 171, 1)",
+        "excludes": [
+          "600061081",
+          "600061087",
+          "600210088"
+        ]
+      },
+      {
+        "id": "600061064",
+        "name": "赤霞红",
+        "swatch": "rgba(107, 21, 25, 1)",
+        "excludes": [
+          "600091685",
+          "600061081",
+          "600061087",
+          "600061088",
+          "600061091",
+          "600210088",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061061",
+        "name": "雅灰",
+        "swatch": "rgba(75, 85, 90, 1)",
+        "excludes": [
+          "600091685",
+          "600061081",
+          "600061091",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061068",
+        "name": "靛石绿",
+        "swatch": "rgba(21, 50, 55, 1)",
+        "excludes": [
+          "600091685",
+          "600061081",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061066",
+        "name": "流金粉",
+        "swatch": "rgba(149, 130, 135, 1)",
+        "excludes": [
+          "600091685",
+          "600061091",
+          "600210088",
+          "600061087",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061059",
+        "name": "珍珠白",
+        "swatch": "rgba(149, 155, 162, 1)",
+        "excludes": [
+          "600091685",
+          "600061089",
+          "600061091",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061062",
+        "name": "霞光紫",
+        "swatch": "rgba(110, 86, 131, 1)",
+        "excludes": [
+          "600091685",
+          "600061087",
+          "600061089",
+          "600061091",
+          "600210088",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061063",
+        "name": "曜石黑",
+        "swatch": "rgba(27, 25, 27, 1)",
+        "excludes": [
+          "600091685",
+          "600061081",
+          "600061088",
+          "600061089",
+          "600061091",
+          "600061090"
+        ]
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600061079",
+        "name": "19英寸钻石轮毂 长续航胎",
+        "swatch": null,
+        "excludes": [
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061080",
+        "name": "20英寸梅花轮毂 长续航胎",
+        "swatch": null,
+        "excludes": [
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061081",
+        "name": "20英寸米型轮毂 长续航胎",
+        "swatch": null,
+        "excludes": [
+          "600061067",
+          "600061061",
+          "600061068",
+          "600061063",
+          "600061064",
+          "600061090"
+        ]
+      },
+      {
+        "id": "600061084",
+        "name": "21英寸双层锻造梅花轮毂 长续航胎",
+        "swatch": null,
+        "excludes": [
+          "600061090"
+        ]
+      },
+      {
+        "id": "600138252",
+        "name": "21英寸运动轮毂 运动胎",
+        "swatch": null,
+        "excludes": [
+          "600061090"
+        ]
+      }
+    ],
+    "interior": [
+      {
+        "id": "600061088",
+        "name": "迷雾紫",
+        "swatch": null,
+        "excludes": [
+          "600061064",
+          "600061063",
+          "600091685"
+        ]
+      },
+      {
+        "id": "600061089",
+        "name": "砂陶米",
+        "swatch": null,
+        "excludes": [
+          "600061063",
+          "600061062",
+          "600061059",
+          "600091685"
+        ]
+      },
+      {
+        "id": "600061087",
+        "name": "暮光红",
+        "swatch": null,
+        "excludes": [
+          "600061064",
+          "600061062",
+          "600061066",
+          "600061067",
+          "600091685"
+        ]
+      },
+      {
+        "id": "600061091",
+        "name": "暗夜黑",
+        "swatch": null,
+        "excludes": [
+          "600061064",
+          "600061063",
+          "600061062",
+          "600061059",
+          "600061066",
+          "600061061",
+          "600091685"
+        ]
+      }
+    ],
+    "steering": [
+      {
+        "id": "600061070",
+        "name": "碳纤维运动方向盘",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600061069",
+        "name": "真皮方向盘",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600061067",
+      "wheels": "600061079",
+      "interior": "600061088",
+      "steering": "600061069"
+    }
+  },
+  {
+    "id": "su7-ultra",
+    "name": "SU7 Ultra",
+    "family": "轿车",
+    "bodyStyle": "sedan",
+    "sourceSha256": "3ad1488c24e965a4c17a865f493c07c7a61e7f26a1cbbb505f9b1cb00c307889",
+    "paint": [
+      {
+        "id": "600014083",
+        "name": "闪电黄",
+        "swatch": null,
+        "excludes": [
+          "600014112",
+          "600014111",
+          "600016467",
+          "600016473"
+        ]
+      },
+      {
+        "id": "600014085",
+        "name": "珍珠白",
+        "swatch": null,
+        "excludes": [
+          "600014112",
+          "600014114",
+          "600016467",
+          "600016472",
+          "600016473"
+        ]
+      },
+      {
+        "id": "600014084",
+        "name": "太空银",
+        "swatch": null,
+        "excludes": [
+          "600014111",
+          "600014114",
+          "600016467",
+          "600016472"
+        ]
+      },
+      {
+        "id": "600014081",
+        "name": "鹦鹉绿",
+        "swatch": null,
+        "excludes": [
+          "600014112",
+          "600014111",
+          "600016467",
+          "600016472",
+          "600016473"
+        ]
+      },
+      {
+        "id": "600014082",
+        "name": "曜石黑",
+        "swatch": null,
+        "excludes": [
+          "600014111",
+          "600014114",
+          "600016466",
+          "600016472",
+          "600016473"
+        ]
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600014089",
+        "name": "21英寸U型轮毂高性能胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600016093",
+        "name": "21英寸U型轮毂长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600014091",
+        "name": "21英寸U型轮毂黄轮廓圈高性能胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600016092",
+        "name": "21英寸U型轮毂黄轮廓圈长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600016460",
+        "name": "21英寸U型锻造轮毂石墨黑高性能胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600016464",
+        "name": "21英寸U型锻造轮毂石墨黑长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600016461",
+        "name": "21英寸U型锻造轮毂金属钕高性能胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600016459",
+        "name": "21英寸U型锻造轮毂金属钕长续航胎",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "interior": [
+      {
+        "id": "600014086",
+        "name": "明黄（黄黑 双色）",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600014087",
+        "name": "黑黄 双色",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600014088",
+        "name": "黑红 双色",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "steering": [
+      {
+        "id": "600016503",
+        "name": "碳纤维运动方向盘",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600014083",
+      "wheels": "600014089",
+      "interior": "600014086",
+      "steering": "600016503"
+    }
+  },
+  {
+    "id": "yu7",
+    "name": "YU7 长续航版",
+    "family": "SUV",
+    "bodyStyle": "suv",
+    "sourceSha256": "722eca1187139682c9f33c380fe05d14c72be4873a451e18446904de1e9b7327",
+    "paint": [
+      {
+        "id": "600019706",
+        "name": "宝石绿",
+        "swatch": null,
+        "excludes": [
+          "600129508"
+        ]
+      },
+      {
+        "id": "600019709",
+        "name": "钛金属色",
+        "swatch": null,
+        "excludes": [
+          "600129508"
+        ]
+      },
+      {
+        "id": "600129507",
+        "name": "火山灰",
+        "swatch": null,
+        "excludes": [
+          "600129508"
+        ]
+      },
+      {
+        "id": "600129506",
+        "name": "车厘子红",
+        "swatch": null,
+        "excludes": [
+          "600129508"
+        ]
+      },
+      {
+        "id": "600132398",
+        "name": "霞光紫",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600019713",
+        "name": "流金粉",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600019711",
+        "name": "珍珠白",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600019700",
+        "name": "19英寸钻石轮毂 长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600129509",
+        "name": "20英寸梅花轮毂 长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600129508",
+        "name": "20英寸米型轮毂 车漆同色轮圈 长续航胎",
+        "swatch": null,
+        "excludes": [
+          "600019710",
+          "600019712",
+          "600019709",
+          "600129507",
+          "600019708",
+          "600019714",
+          "600019707",
+          "600129506",
+          "600019706"
+        ]
+      },
+      {
+        "id": "600019703",
+        "name": "21英寸幻刃轮毂 长续航胎",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "interior": [
+      {
+        "id": "600019732",
+        "name": "暮影蓝",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600019733",
+        "name": "松石灰（绿灰 双色）",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600019734",
+        "name": "鸢尾紫（紫灰 双色）",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600019731",
+        "name": "珊瑚橙",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "steering": [
+      {
+        "id": "factory",
+        "name": "保留原车配置",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600019709",
+      "wheels": "600019700",
+      "interior": "600019732",
+      "steering": "factory"
+    }
+  },
+  {
+    "id": "yu7-gt",
+    "name": "YU7 GT",
+    "family": "SUV",
+    "bodyStyle": "suv",
+    "sourceSha256": "6f66617972331c1495b33e265e17de56f5f1f4ae71c755e700cde89ff7f2686e",
+    "paint": [
+      {
+        "id": "600127506",
+        "name": "车厘子红",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600127508",
+        "name": "曜石黑",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600127507",
+        "name": "珍珠白",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600136953",
+        "name": "钛金属色",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600138482",
+        "name": "21英寸 五辐双层锻造轮毂 碳黑 长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600136958",
+        "name": "21英寸 五辐双层锻造轮毂 碳黑 运动胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600138481",
+        "name": "21英寸 五辐双层锻造轮毂 镜面银 长续航胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600136959",
+        "name": "21英寸 五辐双层锻造轮毂 镜面银 运动胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600127504",
+        "name": "21英寸 低风阻幻刃轮毂 长续航胎",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "interior": [
+      {
+        "id": "600143268",
+        "name": "赛道红（红黑 双色）",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600127519",
+        "name": "夜焰黑",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600127518",
+        "name": "鸢尾紫（紫灰 双色）",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "steering": [
+      {
+        "id": "600138480",
+        "name": "碳纤维运动方向盘",
+        "swatch": null,
+        "excludes": [
+          "600136956"
+        ]
+      },
+      {
+        "id": "600138479",
+        "name": "经典方向盘",
+        "swatch": null,
+        "excludes": [
+          "600136957"
+        ]
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600127506",
+      "wheels": "600127504",
+      "interior": "600143268",
+      "steering": "600138480"
+    }
+  },
+  {
+    "id": "n70",
+    "name": "N70 Max",
+    "family": "多功能车型",
+    "bodyStyle": "mpv",
+    "sourceSha256": "f622a6d0649f9e4a720220bac25612f9404a3745d468e36c09399155df34bde2",
+    "paint": [
+      {
+        "id": "600147052",
+        "name": "蝴蝶谷蓝",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147079"
+        ]
+      },
+      {
+        "id": "600193829",
+        "name": "蝴蝶谷蓝 + 银色拉丝饰板",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147078"
+        ]
+      },
+      {
+        "id": "600147049",
+        "name": "远山青",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147079"
+        ]
+      },
+      {
+        "id": "600193828",
+        "name": "远山青 + 银色拉丝饰板",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147078"
+        ]
+      },
+      {
+        "id": "600147053",
+        "name": "火山灰",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147079"
+        ]
+      },
+      {
+        "id": "600147048",
+        "name": "冷卡其",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147079"
+        ]
+      },
+      {
+        "id": "600147051",
+        "name": "曜石黑",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147079"
+        ]
+      },
+      {
+        "id": "600214340",
+        "name": "曜石黑（武士黑套装）",
+        "swatch": null,
+        "excludes": [
+          "600147065",
+          "600147079"
+        ]
+      },
+      {
+        "id": "600147047",
+        "name": "珍珠白",
+        "swatch": null,
+        "excludes": [
+          "600147066",
+          "600147079"
+        ]
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600147054",
+        "name": "19英寸 叶片轮毂 长续航胎",
+        "swatch": null,
+        "excludes": [
+          "600147066"
+        ]
+      },
+      {
+        "id": "600147056",
+        "name": "21英寸 星芒轮毂 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147066"
+        ]
+      },
+      {
+        "id": "600147057",
+        "name": "21英寸 星芒轮毂 武士黑版 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147065"
+        ]
+      },
+      {
+        "id": "600147055",
+        "name": "21英寸 光辐轮毂 悬浮车标 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147066"
+        ]
+      }
+    ],
+    "interior": [
+      {
+        "id": "600147072",
+        "name": "砂陶米",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147071",
+        "name": "摩卡棕",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147073",
+        "name": "暗夜黑",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "steering": [
+      {
+        "id": "factory",
+        "name": "保留原车配置",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600147052",
+      "wheels": "600147054",
+      "interior": "600147072",
+      "steering": "factory"
+    }
+  },
+  {
+    "id": "n90",
+    "name": "N90 Max",
+    "family": "多功能车型",
+    "bodyStyle": "mpv",
+    "sourceSha256": "b5c60d2f89dd4b4cf66fdcff8b55bf3c7c313c3f099b16782aa4bdb833359226",
+    "paint": [
+      {
+        "id": "600147094",
+        "name": "远山青",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147115"
+        ]
+      },
+      {
+        "id": "600193819",
+        "name": "远山青 + 银色拉丝饰板",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147114"
+        ]
+      },
+      {
+        "id": "600147097",
+        "name": "火山灰",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147115"
+        ]
+      },
+      {
+        "id": "600147095",
+        "name": "酒红",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147115"
+        ]
+      },
+      {
+        "id": "600147093",
+        "name": "冷卡其",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147115"
+        ]
+      },
+      {
+        "id": "600147091",
+        "name": "珍珠白",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147115"
+        ]
+      },
+      {
+        "id": "600147092",
+        "name": "曜石黑",
+        "swatch": null,
+        "excludes": [
+          "600147113",
+          "600147115"
+        ]
+      },
+      {
+        "id": "600214342",
+        "name": "曜石黑（武士黑套装）",
+        "swatch": null,
+        "excludes": [
+          "600147112",
+          "600147115"
+        ]
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600147103",
+        "name": "21英寸 棱镜轮毂 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147113"
+        ]
+      },
+      {
+        "id": "600147105",
+        "name": "21英寸 星芒轮毂 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147113"
+        ]
+      },
+      {
+        "id": "600147106",
+        "name": "21英寸 星芒轮毂 武士黑版 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147112"
+        ]
+      },
+      {
+        "id": "600147104",
+        "name": "21英寸 光辐轮毂 悬浮车标 普利司通静音胎",
+        "swatch": null,
+        "excludes": [
+          "600147113"
+        ]
+      }
+    ],
+    "interior": [
+      {
+        "id": "600147099",
+        "name": "砂陶米",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147098",
+        "name": "摩卡棕",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147100",
+        "name": "暗夜黑",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "steering": [
+      {
+        "id": "factory",
+        "name": "保留原车配置",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600147094",
+      "wheels": "600147103",
+      "interior": "600147098",
+      "steering": "factory"
+    }
+  },
+  {
+    "id": "n90-explore",
+    "name": "N90 Max 探索版",
+    "family": "多功能车型",
+    "bodyStyle": "mpv",
+    "sourceSha256": "827a71162c80f64ca5c8f7506faa7f250b43ca823d698a30c9eafb84df589e2c",
+    "paint": [
+      {
+        "id": "600147128",
+        "name": "远山青",
+        "swatch": null,
+        "excludes": [
+          "600147145"
+        ]
+      },
+      {
+        "id": "600193824",
+        "name": "远山青 + 银色拉丝饰板",
+        "swatch": null,
+        "excludes": [
+          "600147144"
+        ]
+      },
+      {
+        "id": "600147131",
+        "name": "火山灰",
+        "swatch": null,
+        "excludes": [
+          "600147145"
+        ]
+      },
+      {
+        "id": "600214346",
+        "name": "珍珠白",
+        "swatch": null,
+        "excludes": [
+          "600147145"
+        ]
+      },
+      {
+        "id": "600147127",
+        "name": "冷卡其",
+        "swatch": null,
+        "excludes": [
+          "600147145"
+        ]
+      }
+    ],
+    "wheels": [
+      {
+        "id": "600147136",
+        "name": "21英寸 棱镜轮毂 普利司通静音胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147140",
+        "name": "21英寸 星芒轮毂 普利司通静音胎",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147138",
+        "name": "21英寸 光辐轮毂 悬浮车标 普利司通静音胎",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "interior": [
+      {
+        "id": "600147133",
+        "name": "砂陶米",
+        "swatch": null,
+        "excludes": []
+      },
+      {
+        "id": "600147132",
+        "name": "摩卡棕",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "steering": [
+      {
+        "id": "factory",
+        "name": "保留原车配置",
+        "swatch": null,
+        "excludes": []
+      }
+    ],
+    "defaults": {
+      "catalogVersion": 1,
+      "paint": "600147128",
+      "wheels": "600147136",
+      "interior": "600147132",
+      "steering": "factory"
+    }
+  }
+]

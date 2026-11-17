@@ -1,0 +1,32 @@
+{
+  "identifier": "main",
+  "description": "Local editor shell only",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:window:allow-close",
+    "allow-read-view",
+    "allow-execute",
+    "allow-close-clean",
+    "allow-choose-directory",
+    "allow-viewport-load",
+    "allow-viewport-bounds",
+    "allow-viewport-status",
+    "allow-viewport-reset",
+    "allow-viewport-focus",
+    "allow-viewport-select",
+    "allow-viewport-pointer",
+    "allow-viewport-probe",
+    "allow-import-image",
+    "allow-asset-bytes",
+    "allow-viewport-surface",
+    "allow-viewport-coverage",
+    "allow-viewport-transport",
+    "allow-viewport-gesture",
+    "allow-viewport-decal",
+    "allow-import-image-path"
+  ]
+}

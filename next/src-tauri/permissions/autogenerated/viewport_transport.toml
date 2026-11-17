@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-transport"
+description = "Enables the viewport_transport command without any pre-configured scope."
+commands.allow = ["viewport_transport"]
+
+[[permission]]
+identifier = "deny-viewport-transport"
+description = "Denies the viewport_transport command without any pre-configured scope."
+commands.deny = ["viewport_transport"]

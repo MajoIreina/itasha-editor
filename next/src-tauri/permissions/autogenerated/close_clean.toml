@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-close-clean"
+description = "Enables the close_clean command without any pre-configured scope."
+commands.allow = ["close_clean"]
+
+[[permission]]
+identifier = "deny-close-clean"
+description = "Denies the close_clean command without any pre-configured scope."
+commands.deny = ["close_clean"]

@@ -1,0 +1,25 @@
+[package]
+name = "itasha-desktop"
+version.workspace = true
+edition.workspace = true
+build = "build.rs"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+rfd = "0.17.2"
+itasha-application.workspace = true
+itasha-contracts.workspace = true
+itasha-surface-map.workspace = true
+itasha-persistence.workspace = true
+uuid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+itasha-renderer = { path = "../crates/renderer" }
+winit = "=0.30.13"
+windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_WindowsAndMessaging"] }

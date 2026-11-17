@@ -1,0 +1,15 @@
+[package]
+name = "itasha-application"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+itasha-contracts.workspace = true
+itasha-domain.workspace = true
+itasha-persistence.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

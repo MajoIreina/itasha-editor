@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-gesture"
+description = "Enables the viewport_gesture command without any pre-configured scope."
+commands.allow = ["viewport_gesture"]
+
+[[permission]]
+identifier = "deny-viewport-gesture"
+description = "Denies the viewport_gesture command without any pre-configured scope."
+commands.deny = ["viewport_gesture"]

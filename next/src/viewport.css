@@ -1,0 +1,13 @@
+.native-preview{display:flex;flex-direction:column}
+.native-preview .panel-title{flex-shrink:0}
+.viewport-actions{display:flex;align-items:center;gap:12px}
+.viewport-actions button{padding:3px 8px;font-size:10px}
+.viewport-cross-surface{display:flex;align-items:center;gap:5px;font-size:11px;white-space:nowrap;cursor:pointer}
+.viewport-cross-surface input{width:auto;margin:0;accent-color:var(--accent)}
+.native-viewport-host{flex:1;min-height:0;position:relative;overflow:hidden}
+.native-placeholder{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center}
+.native-placeholder h1{font-size:17px;letter-spacing:0}
+.native-placeholder p{color:var(--text-muted);font-size:12px;line-height:1.8;max-width:560px}
+.viewport-status{height:30px;flex-shrink:0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 12px;font-size:10px;color:var(--text-muted);white-space:nowrap;overflow:hidden}
+@container preview (max-width:650px){.viewport-status span:last-child{display:none}.viewport-actions small{display:none}}
+@container preview (max-height:280px){.native-placeholder .wire-cube{display:none}.native-placeholder h1{margin:0}.native-placeholder p{margin:6px 0}}

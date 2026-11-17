@@ -1,0 +1,632 @@
+{
+  "status": "packed-classified-surface-map-candidate",
+  "classifiedParts": [
+    "su7.charge-cover",
+    "su7.front-bumper",
+    "su7.front-c-ring",
+    "su7.front-left-door",
+    "su7.front-left-fender",
+    "su7.front-left-lower-fender",
+    "su7.front-right-door",
+    "su7.front-right-fender",
+    "su7.front-right-lower-fender",
+    "su7.hood",
+    "su7.rear-bumper",
+    "su7.rear-c-ring",
+    "su7.rear-left-door",
+    "su7.rear-left-fender",
+    "su7.rear-right-door",
+    "su7.rear-right-fender",
+    "su7.rear-spoiler"
+  ],
+  "excludedUnclassifiedParts": [
+    {
+      "partId": "su7.left-sill",
+      "triangleCount": 232,
+      "reason": "no corresponding user-classified PNG/PSD mask"
+    },
+    {
+      "partId": "su7.right-sill",
+      "triangleCount": 922,
+      "reason": "no corresponding user-classified PNG/PSD mask"
+    },
+    {
+      "partId": "su7.trunk",
+      "triangleCount": 11224,
+      "reason": "no corresponding user-classified PNG/PSD mask"
+    }
+  ],
+  "unclassifiedParts": [],
+  "includedTriangleWorldGeometryAndSourceLineageUnchanged": true,
+  "unclassifiedSourceUv0FallbackEnabled": false,
+  "connectionsRemovedWithUnclassifiedParts": 0,
+  "classificationAlphaIslandsRemoved": 0,
+  "warnings": [
+    "Disconnected user-classified islands are retained and rigidly arranged near their primary island.",
+    "Only user-classified PNG/PSD parts are included unless the legacy fallback flag is explicitly enabled."
+  ],
+  "parts": [
+    {
+      "partId": "su7.charge-cover",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 791,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 0.0391639299352428,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        183.62074279785156,
+        238.70697021484375
+      ],
+      "islands": [
+        {
+          "triangles": 791,
+          "worldAreaM2": 0.0391639299352428,
+          "originalBoundsMm": [
+            183.62074279785156,
+            238.70697021484375
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-bumper",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 13176,
+      "islandCount": 6,
+      "mainIslandWorldAreaM2": 0.8891833064458577,
+      "supplementWorldAreaM2": 0.0051855833276656035,
+      "sourceIslandBoundsMm": [
+        2614.745849609375,
+        767.0188598632812
+      ],
+      "islands": [
+        {
+          "triangles": 12642,
+          "worldAreaM2": 0.8891833064458577,
+          "originalBoundsMm": [
+            2614.7459179013968,
+            690.2034156322479
+          ]
+        },
+        {
+          "triangles": 228,
+          "worldAreaM2": 0.002774944340214037,
+          "originalBoundsMm": [
+            56.9351806640625,
+            56.815460205078125
+          ]
+        },
+        {
+          "triangles": 60,
+          "worldAreaM2": 0.0006561712263987575,
+          "originalBoundsMm": [
+            28.68682861328125,
+            28.60712432861328
+          ]
+        },
+        {
+          "triangles": 66,
+          "worldAreaM2": 0.0006561646232622976,
+          "originalBoundsMm": [
+            28.60723876953125,
+            28.60712432861328
+          ]
+        },
+        {
+          "triangles": 90,
+          "worldAreaM2": 0.0005493715970177773,
+          "originalBoundsMm": [
+            26.013916015625,
+            25.974090576171875
+          ]
+        },
+        {
+          "triangles": 90,
+          "worldAreaM2": 0.0005489315407727342,
+          "originalBoundsMm": [
+            25.973876953125,
+            26.17333221435547
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-c-ring",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 2341,
+      "islandCount": 2,
+      "mainIslandWorldAreaM2": 0.04225681790611166,
+      "supplementWorldAreaM2": 0.04166888040479738,
+      "sourceIslandBoundsMm": [
+        523.2241821289062,
+        872.2188720703125
+      ],
+      "islands": [
+        {
+          "triangles": 1180,
+          "worldAreaM2": 0.04225681790611166,
+          "originalBoundsMm": [
+            523.2241914272308,
+            313.43439078330994
+          ]
+        },
+        {
+          "triangles": 1161,
+          "worldAreaM2": 0.04166888040479738,
+          "originalBoundsMm": [
+            297.6090087890625,
+            538.7844581604004
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-left-door",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 8182,
+      "islandCount": 5,
+      "mainIslandWorldAreaM2": 0.8382125665857849,
+      "supplementWorldAreaM2": 0.03943864750510687,
+      "sourceIslandBoundsMm": [
+        766.1796264648438,
+        1397.591796875
+      ],
+      "islands": [
+        {
+          "triangles": 6769,
+          "worldAreaM2": 0.8382125665857849,
+          "originalBoundsMm": [
+            766.1796259880066,
+            1210.0622039623559
+          ]
+        },
+        {
+          "triangles": 618,
+          "worldAreaM2": 0.019168926658322337,
+          "originalBoundsMm": [
+            260.290771484375,
+            91.95166015625
+          ]
+        },
+        {
+          "triangles": 587,
+          "worldAreaM2": 0.013144710159475964,
+          "originalBoundsMm": [
+            223.1240234375,
+            85.850341796875
+          ]
+        },
+        {
+          "triangles": 190,
+          "worldAreaM2": 0.006959977223527154,
+          "originalBoundsMm": [
+            55.033935546875,
+            167.529541015625
+          ]
+        },
+        {
+          "triangles": 18,
+          "worldAreaM2": 0.00016503346378142118,
+          "originalBoundsMm": [
+            8.66796875,
+            47.576751708984375
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-left-fender",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 3659,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 0.3874218489306587,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        1363.9295654296875,
+        387.4577331542969
+      ],
+      "islands": [
+        {
+          "triangles": 3659,
+          "worldAreaM2": 0.3874218489306587,
+          "originalBoundsMm": [
+            1363.9296016693115,
+            387.45772314071655
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-left-lower-fender",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 1142,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 0.08548535999549285,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        256.69195556640625,
+        529.20947265625
+      ],
+      "islands": [
+        {
+          "triangles": 1142,
+          "worldAreaM2": 0.08548535999549285,
+          "originalBoundsMm": [
+            256.69195556640625,
+            529.20947265625
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-right-door",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 8180,
+      "islandCount": 4,
+      "mainIslandWorldAreaM2": 0.838201270497841,
+      "supplementWorldAreaM2": 0.03927445013802569,
+      "sourceIslandBoundsMm": [
+        766.521484375,
+        1397.31494140625
+      ],
+      "islands": [
+        {
+          "triangles": 6791,
+          "worldAreaM2": 0.838201270497841,
+          "originalBoundsMm": [
+            766.521484375,
+            1209.773465871811
+          ]
+        },
+        {
+          "triangles": 615,
+          "worldAreaM2": 0.019169178104191612,
+          "originalBoundsMm": [
+            260.3105773925781,
+            91.903564453125
+          ]
+        },
+        {
+          "triangles": 587,
+          "worldAreaM2": 0.013144839596514662,
+          "originalBoundsMm": [
+            223.07929587364197,
+            85.842529296875
+          ]
+        },
+        {
+          "triangles": 187,
+          "worldAreaM2": 0.0069604324373194176,
+          "originalBoundsMm": [
+            55.0430908203125,
+            167.54150390625
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-right-fender",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 3799,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 0.3864209671421393,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        1361.0831298828125,
+        388.1102294921875
+      ],
+      "islands": [
+        {
+          "triangles": 3799,
+          "worldAreaM2": 0.3864209671421393,
+          "originalBoundsMm": [
+            1361.0831830501556,
+            388.1102411746979
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.front-right-lower-fender",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 1770,
+      "islandCount": 2,
+      "mainIslandWorldAreaM2": 0.12133737941279685,
+      "supplementWorldAreaM2": 5.210216701849663e-07,
+      "sourceIslandBoundsMm": [
+        648.4471435546875,
+        326.2236328125
+      ],
+      "islands": [
+        {
+          "triangles": 1769,
+          "worldAreaM2": 0.12133737941279685,
+          "originalBoundsMm": [
+            648.4471232295036,
+            305.49679785966873
+          ]
+        },
+        {
+          "triangles": 1,
+          "worldAreaM2": 5.210216701849663e-07,
+          "originalBoundsMm": [
+            0.646209716796875,
+            0.726837158203125
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.hood",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 7689,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 1.800825152050424,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        1663.38720703125,
+        1357.019775390625
+      ],
+      "islands": [
+        {
+          "triangles": 7689,
+          "worldAreaM2": 1.800825152050424,
+          "originalBoundsMm": [
+            1663.3871505260468,
+            1357.0197381973267
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-bumper",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 9560,
+      "islandCount": 2,
+      "mainIslandWorldAreaM2": 0.7753897003492849,
+      "supplementWorldAreaM2": 5.288720515443321e-06,
+      "sourceIslandBoundsMm": [
+        2983.089599609375,
+        571.1888427734375
+      ],
+      "islands": [
+        {
+          "triangles": 9558,
+          "worldAreaM2": 0.7753897003492849,
+          "originalBoundsMm": [
+            2983.089565873146,
+            548.239355802536
+          ]
+        },
+        {
+          "triangles": 2,
+          "worldAreaM2": 5.288720515443321e-06,
+          "originalBoundsMm": [
+            3.6107177734375,
+            2.9495086669921875
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-c-ring",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 2909,
+      "islandCount": 2,
+      "mainIslandWorldAreaM2": 0.07805462945323688,
+      "supplementWorldAreaM2": 0.07805137806339947,
+      "sourceIslandBoundsMm": [
+        563.8377685546875,
+        869.7318115234375
+      ],
+      "islands": [
+        {
+          "triangles": 1465,
+          "worldAreaM2": 0.07805462945323688,
+          "originalBoundsMm": [
+            284.8312689065933,
+            564.1334347110242
+          ]
+        },
+        {
+          "triangles": 1444,
+          "worldAreaM2": 0.07805137806339947,
+          "originalBoundsMm": [
+            563.8377685546875,
+            285.5983581542969
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-left-door",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 7413,
+      "islandCount": 6,
+      "mainIslandWorldAreaM2": 0.6931239852355977,
+      "supplementWorldAreaM2": 0.043095784062361,
+      "sourceIslandBoundsMm": [
+        831.3511352539062,
+        1497.083740234375
+      ],
+      "islands": [
+        {
+          "triangles": 5635,
+          "worldAreaM2": 0.6931239852355977,
+          "originalBoundsMm": [
+            831.3511610031128,
+            1112.657958984375
+          ]
+        },
+        {
+          "triangles": 992,
+          "worldAreaM2": 0.024707248031474255,
+          "originalBoundsMm": [
+            129.61712646484375,
+            244.931396484375
+          ]
+        },
+        {
+          "triangles": 639,
+          "worldAreaM2": 0.013229183388557535,
+          "originalBoundsMm": [
+            218.65159606933594,
+            84.283447265625
+          ]
+        },
+        {
+          "triangles": 104,
+          "worldAreaM2": 0.004432985107562834,
+          "originalBoundsMm": [
+            755.8892492055893,
+            38.45450007915497
+          ]
+        },
+        {
+          "triangles": 26,
+          "worldAreaM2": 0.0004728632913626509,
+          "originalBoundsMm": [
+            86.17327880859375,
+            22.430944442749023
+          ]
+        },
+        {
+          "triangles": 17,
+          "worldAreaM2": 0.00025350424340373135,
+          "originalBoundsMm": [
+            19.9185791015625,
+            41.03985595703125
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-left-fender",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 6822,
+      "islandCount": 2,
+      "mainIslandWorldAreaM2": 0.8723817293328374,
+      "supplementWorldAreaM2": 0.00012686096053692397,
+      "sourceIslandBoundsMm": [
+        1376.192138671875,
+        3506.35888671875
+      ],
+      "islands": [
+        {
+          "triangles": 6795,
+          "worldAreaM2": 0.8723817293328374,
+          "originalBoundsMm": [
+            1376.1921501979232,
+            3474.240492284298
+          ]
+        },
+        {
+          "triangles": 27,
+          "worldAreaM2": 0.00012686096053692397,
+          "originalBoundsMm": [
+            13.551971435546875,
+            12.118408203125
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-right-door",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 7366,
+      "islandCount": 5,
+      "mainIslandWorldAreaM2": 0.6930966197772286,
+      "supplementWorldAreaM2": 0.03827797252978112,
+      "sourceIslandBoundsMm": [
+        836.5078125,
+        1270.975830078125
+      ],
+      "islands": [
+        {
+          "triangles": 5682,
+          "worldAreaM2": 0.6930966197772286,
+          "originalBoundsMm": [
+            836.5078125,
+            1120.705347776413
+          ]
+        },
+        {
+          "triangles": 995,
+          "worldAreaM2": 0.024706611494298675,
+          "originalBoundsMm": [
+            247.45091247558594,
+            130.2705078125
+          ]
+        },
+        {
+          "triangles": 640,
+          "worldAreaM2": 0.013229855044822143,
+          "originalBoundsMm": [
+            220.2455711364746,
+            84.849365234375
+          ]
+        },
+        {
+          "triangles": 27,
+          "worldAreaM2": 0.0002462525305620688,
+          "originalBoundsMm": [
+            17.032958984375,
+            33.0748291015625
+          ]
+        },
+        {
+          "triangles": 22,
+          "worldAreaM2": 9.525346009823259e-05,
+          "originalBoundsMm": [
+            10.4501953125,
+            45.42315673828125
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-right-fender",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 6076,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 0.9006034411135622,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        1376.9796142578125,
+        3473.142578125
+      ],
+      "islands": [
+        {
+          "triangles": 6076,
+          "worldAreaM2": 0.9006034411135622,
+          "originalBoundsMm": [
+            1376.979670882225,
+            3473.1426790058613
+          ]
+        }
+      ]
+    },
+    {
+      "partId": "su7.rear-spoiler",
+      "status": "classified-alpha-preserved",
+      "triangleCount": 2481,
+      "islandCount": 1,
+      "mainIslandWorldAreaM2": 0.33430574165036864,
+      "supplementWorldAreaM2": 0,
+      "sourceIslandBoundsMm": [
+        1366.1888427734375,
+        276.4481506347656
+      ],
+      "islands": [
+        {
+          "triangles": 2481,
+          "worldAreaM2": 0.33430574165036864,
+          "originalBoundsMm": [
+            1366.1888473033905,
+            276.4481454640627
+          ]
+        }
+      ]
+    }
+  ]
+}

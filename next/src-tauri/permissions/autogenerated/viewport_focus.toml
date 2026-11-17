@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-focus"
+description = "Enables the viewport_focus command without any pre-configured scope."
+commands.allow = ["viewport_focus"]
+
+[[permission]]
+identifier = "deny-viewport-focus"
+description = "Denies the viewport_focus command without any pre-configured scope."
+commands.deny = ["viewport_focus"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-asset-bytes"
+description = "Enables the asset_bytes command without any pre-configured scope."
+commands.allow = ["asset_bytes"]
+
+[[permission]]
+identifier = "deny-asset-bytes"
+description = "Denies the asset_bytes command without any pre-configured scope."
+commands.deny = ["asset_bytes"]

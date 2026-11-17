@@ -1,0 +1,10 @@
+[package]
+name = "itasha-domain"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+itasha-contracts.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true

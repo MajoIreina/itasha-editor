@@ -1,0 +1,38 @@
+{
+  "name": "itasha-editor-next",
+  "version": "0.3.0-dev.6",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build --no-bundle",
+    "test:core": "cargo test --workspace --exclude itasha-desktop --locked",
+    "check:boundary": "node tools/check-boundary.mjs",
+    "test:transforms": "node tools/test-transforms.mjs",
+    "test:desktop": "node tools/smoke-desktop.mjs",
+    "inventory": "node tools/inventory-legacy.mjs",
+    "catalog:build": "node tools/build-vehicle-catalog.mjs",
+    "test:editor-properties": "node tools/test-editor-properties.mjs",
+    "test:whole-layout": "node tools/test-whole-layout.mjs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.12.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "playwright-core": "1.58.2",
+    "pngjs": "7.0.0",
+    "typescript": "5.9.3",
+    "vite": "8.3.7"
+  }
+}

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-bounds"
+description = "Enables the viewport_bounds command without any pre-configured scope."
+commands.allow = ["viewport_bounds"]
+
+[[permission]]
+identifier = "deny-viewport-bounds"
+description = "Denies the viewport_bounds command without any pre-configured scope."
+commands.deny = ["viewport_bounds"]

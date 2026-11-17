@@ -1,0 +1,52 @@
+/* Windows 11 inspired neutral surfaces with blue accents in both themes. */
+:root {
+  color-scheme: dark;
+  --accent: #60cdff;
+  --text: #ffffff;
+  --text-muted: #c5c5c5;
+  --text-accent: #e5e5e5;
+  --on-accent: #000000;
+  --bg: #202020;
+  --surface: #272727;
+  --raised: #2d2d2d;
+  --tinted: #353535;
+  --border: #404040;
+  --border-strong: #60cdff;
+  --glow: #ffffff05;
+  --scrollbar: #767676;
+  --vehicle-line: #b3b3b3;
+  --vehicle-glass: #1a1a1a;
+  --vehicle-wheel: #181818;
+  --error-bg: #462b2b;
+  --error-text: #ffd1cd;
+  --notice-bg: #333421;
+  --notice-text: #eee6b5;
+  --checker-a: #383838;
+  --checker-b: #292929;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --accent: #0078d4;
+  --text: #1a1a1a;
+  --text-muted: #5c5c5c;
+  --text-accent: #323232;
+  --on-accent: #ffffff;
+  --bg: #f3f3f3;
+  --surface: #ffffff;
+  --raised: #f9f9f9;
+  --tinted: #e9e9e9;
+  --border: #d6d6d6;
+  --border-strong: #0078d4;
+  --glow: #00000003;
+  --scrollbar: #8a8a8a;
+  --vehicle-line: #606060;
+  --vehicle-glass: #d9d9d9;
+  --vehicle-wheel: #333333;
+  --error-bg: #fff0ee;
+  --error-text: #9f2924;
+  --notice-bg: #fff6d9;
+  --notice-text: #66521a;
+  --checker-a: #d6d6d6;
+  --checker-b: #eeeeee;
+}
+.settings-content .setting-row + h3 { margin-top: 24px; }

@@ -20,3 +20,7 @@
 *.icc binary
 *.su7design text eol=lf
 tools/fixtures/images/* binary
+*.mjs text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.wgsl text eol=lf

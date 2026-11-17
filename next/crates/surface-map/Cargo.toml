@@ -1,0 +1,10 @@
+[package]
+name = "itasha-surface-map"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+glam = { version = "0.30", features = ["serde"] }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true

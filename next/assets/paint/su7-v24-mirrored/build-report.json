@@ -1,0 +1,21 @@
+{
+  "status": "mirrored-lower-fender-candidate-awaiting-seal",
+  "input": "L:\\SU7\\痛车编辑器-下一版\\next\\assets\\paint\\su7-v23-restored\\paint-map.json",
+  "inputPaintFingerprint": "5528f079561b12cb3dee51c495f6507ad7f58a291902afa0583353064b5c52e3",
+  "modelFingerprint": "99ab99adcfddfb681e966a0309849eb534d13aacb480d34b3f27f69e29b07193",
+  "leftComponentFaces": 1578,
+  "rightComponentFaces": 1602,
+  "faceCorrespondenceWorstMm": 3.3153468844560736,
+  "rightTriangles": 1770,
+  "rebuiltLeftTriangles": 1770,
+  "invalidFragmentsDropped": 0,
+  "removedLeftTriangles": 1736,
+  "mirroredSeams": 11,
+  "skippedSeams": [],
+  "chartWidthMm": 648.44714,
+  "method": "mirror right source faces across z=0 to left faces by centroid, copy source barycentrics, mirror chart u = width - u, mirror the right-side seams",
+  "warnings": [
+    "Left part duplicates right-part paint UVs mirrored horizontally; it is a design axis, not a separately unwrapped chart.",
+    "Face correspondence by nearest mirrored centroid tolerates model asymmetry; see faceCorrespondenceWorstMm."
+  ]
+}

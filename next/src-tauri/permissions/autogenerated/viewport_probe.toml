@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-viewport-probe"
+description = "Enables the viewport_probe command without any pre-configured scope."
+commands.allow = ["viewport_probe"]
+
+[[permission]]
+identifier = "deny-viewport-probe"
+description = "Denies the viewport_probe command without any pre-configured scope."
+commands.deny = ["viewport_probe"]

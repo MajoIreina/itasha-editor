@@ -1,64 +1,58 @@
-# 痛车编辑器 · Itasha Editor 0.2
+# 痛车编辑器 NEXT · Itasha Editor
 
-Windows 本地涂装编辑器，使用 Rust 后端与 Electron 前端。支持二维图层编辑、真实车身曲面贴合、跨部件素材移动、独立 FOV 镜头和 PNG / SVG / PDF 输出。目前完整编辑 Su7，其他车型与用户模型导入仍在适配。
+本仓库的开发主线已于 **2026-11-17** 切换为重构后的 NEXT（`0.3.0-dev.6`）：Rust + Tauri 2 + React / TypeScript + 原生 wgpu。后续功能、修复和构建均在 [`next/`](next/README.md) 进行。
 
-本仓库管理源码、配置、测试、示例与文档。Electron、ImageMagick、离线车型存档及用户数据保留在本地，不进入 Git。克隆源码后需要恢复离线资源并构建，不能直接作为便携版运行。
+当前实现包含欢迎与车型选配、SU7 Max 原生 3D、二维/三维素材编辑、图层变换、保存/重开及撤销/重做。生产漆面映射为 **v24 mirrored**，保留 v21 用于兼容回归。
 
-## 项目结构
+这是开发基线：施工导出、旧版工程迁移、其他车型完整适配和发布验收尚未完成。2026-11-17 验证发现一项现有跨面传播回归失败，详见 [主线切换与验证记录](docs/NEXT主线切换-2026-11-17.md)。
 
-| 目录 | 内容 |
+## 开发与构建
+
+在 Windows x64 安装 Rust/MSVC、Windows SDK、Node.js、pnpm 和 WebView2。环境与锁文件说明见 [开发与构建](docs/开发与构建.md)。
+
+```powershell
+cd next
+pnpm install --frozen-lockfile
+pnpm desktop:dev
+```
+
+```powershell
+# 独立 Windows exe，不生成安装器
+pnpm desktop:build
+```
+
+输出为 `next/target/release/itasha-desktop.exe`。根目录的 `启动工作室.cmd` 仅启动此 NEXT 发行构建。模型包需单独恢复，见 [离线资源](docs/离线资源.md)。
+
+## 项目目录
+
+| 路径 | 内容 |
 | --- | --- |
-| `app/` | 编辑界面、相机、曲面算法、3D 引擎适配与输出 |
-| `backend/src/` | Rust HTTP 服务、图片解码调度、工程存储、导出和离线重放 |
-| `desktop/src/` | Electron 窗口、后端进程与生命周期 |
-| `config/` | 车型注册表、图片处理策略与色彩配置 |
-| `vehicles/<id>/` | 按车型维护的后端适配数据；模型与捕获清单另行恢复 |
-| `resources/` | 离线引擎的源码定制；大型存档留在本地 |
-| `examples/` | 可分发的示例工程 |
-| `tools/` | 构建、资源检查和真实应用验收脚本 |
-| `tools/fixtures/` | 自动化测试素材 |
-| `docs/` | 架构、构建、验收、资源恢复与仓库约定 |
+| `next/src/` | React 界面与 Tauri bridge |
+| `next/src-tauri/` | Windows 宿主、命令权限与车型适配 |
+| `next/crates/` | 契约、领域、应用服务、存储、曲面与渲染器 |
+| `next/catalog/` | 编入 Rust 的车型选配数据 |
+| `next/assets/paint/` | 当前运行映射与必要回归样本 |
+| `next/tools/` | 桌面 smoke、边界检查与资产处理工具 |
+| `config/vehicles.json`、`vehicles/*/backend-adapter.json` | 车型目录生成所需的来源数据 |
+| `docs/` | 当前开发约定、验收记录与有日期的重构设计资料 |
 
-## 开发启动
+旧版源码、本机运行时、用户工程、临时漆面、模型 GLB/贴图和构建产物退出当前 Git 树，仍保留于本地或历史备份。恢复范围与历史保全方式见 [仓库管理](docs/仓库管理.md)。
 
-Windows x64 需要 Rust/Cargo 1.97.1、MSVC C++ Build Tools、Windows SDK、Node.js 24.22.1 和 pnpm 11.25.0。JS 与 Rust 依赖由锁文件固定。
+## 验证
 
-```powershell
-# 从已有完整本地目录恢复离线车型资源，不读取用户工程。
-node tools/local-assets.cjs --from 'D:\已有完整的痛车编辑器'
-node tools/local-assets.cjs --check
-
-# 指向已安装 pnpm 的 JS 入口，安装并构建宿主与后端。
-$env:ITASHA_PNPM_CLI = 'C:\实际路径\pnpm\bin\pnpm.cjs'
-node tools/setup-desktop.cjs
-node tools/build-desktop.cjs
-.\痛车编辑器.exe
-```
-
-已有完整便携目录可以直接双击根目录 `痛车编辑器.exe`。运行不需要系统 Python、Node.js 或 WebView2。工程保存在 `projects/`，导出在 `exports/`，浏览器设置在 `app-data-electron/`。原 `.su7design` v1 工程继续兼容。
-
-## 检查
+在 `next/` 执行：
 
 ```powershell
-cargo test --locked --manifest-path backend/Cargo.toml
-node --test desktop/test/*.test.cjs tools/test/*.test.cjs
-node tools/surface-curvature-acceptance.cjs
-node tools/camera-navigation-acceptance.cjs
-node tools/acceptance-full.cjs
-node tools/paint-projection-acceptance.cjs
-node tools/benchmark-performance.cjs --enforce
+pnpm build
+pnpm check:boundary
+pnpm test:transforms
+pnpm test:editor-properties
+pnpm test:whole-layout
+cargo fmt --all --check
+cargo test --workspace --exclude itasha-desktop --locked
+pnpm test:desktop
 ```
 
-前三项不需要离线车型资源；真实 Electron 验收需要已构建应用及模型。图形和性能验收应逐项运行，测试工程和配置使用临时目录。当前实测与限制见 `docs/性能与验收.md`。
+桌面 smoke 需要构建后的 NEXT exe 和独立恢复的 SU7 模型；测试依赖安装于 NEXT 自己的工作区。当前状态及失败回归见 [性能与验收](docs/性能与验收.md)。
 
-## 文档
-
-- [使用说明](使用说明.md)
-- [模块架构](docs/模块架构.md)
-- [开发与构建](docs/开发与构建.md)
-- [离线资源恢复](docs/离线资源.md)
-- [仓库与目录约定](docs/仓库管理.md)
-- [接口与车型适配](docs/接口与车型适配.md)
-- [性能与验收](docs/性能与验收.md)
-
-车辆模型、原厂材质和配置器存档来源见 `NOTICE.txt`。仓库没有为这些第三方资源授予新的许可。
+开发入口：[NEXT 说明](next/README.md) · [模块架构](docs/模块架构.md) · [接口与车型适配](docs/接口与车型适配.md) · [开发规则](AGENTS.md)。车辆资产来源说明见 [NOTICE.txt](NOTICE.txt)。
